@@ -204,8 +204,8 @@ class DefaultController extends Controller
                             'format' => $size
                         ]
                     ),
-                    'file' => $url,
-                    'previewImage' => $previewImage
+                    'file' => trim($url),
+                    'previewImage' => trim($previewImage)
                 ])->execute();
         }elseif($typeOfSize){
             Craft::$app->db->createCommand()->insert('{{%print_pdfs}}',
@@ -221,8 +221,8 @@ class DefaultController extends Controller
                             'format' => null
                         ]
                     ),
-                    'file' => $url,
-                    'previewImage' => $previewImage
+                    'file' => trim($url),
+                    'previewImage' => trim($previewImage)
                 ])->execute();
         }
 
@@ -258,7 +258,7 @@ class DefaultController extends Controller
             $previewImage = $asset->getUrl();
             Craft::$app->db->createCommand()->update('{{%print_pdfs}}',
                 [
-                    'previewImage' => $previewImage,
+                    'previewImage' => trim($previewImage),
                 ], ['id' => $id])->execute();
         }
         if ($typeOfSize and $typeOfSize == 'a' and $size and $id){

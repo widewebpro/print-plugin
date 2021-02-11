@@ -112,8 +112,8 @@ class StaticController extends Controller
                 [
                     'title' => $title,
                     'userGroup' => $userGroup,
-                    'file' => $url,
-                    'previewImage' => $previewImage
+                    'file' => trim($url),
+                    'previewImage' => trim($previewImage)
                 ])->execute();
         return Craft::$app->getResponse()->redirect('/' . Craft::$app->config->general->cpTrigger .'/print-plugin/static');
 
