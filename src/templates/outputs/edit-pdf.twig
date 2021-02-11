@@ -1,0 +1,238 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Print Plugin plugin for Craft CMS 3.x
+ *
+ * Print Plugin index.twig
+ *
+ * @author    WideWeb
+ * @copyright Copyright (c) 2020 WideWeb
+ * @link      WideWeb.pro
+ * @package   PrintPlugin
+ * @since     1.0.0
+ */
+#}
+
+{% extends "_layouts/cp" %}
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("wideweb\\printplugin\\assetbundles\\printplugin\\PrintPluginAsset") %}
+{% do view.registerAssetBundle("wideweb\\printplugin\\assetbundles\\indexcpsection\\IndexCPSectionAsset") %}
+
+{# Link for the ? icon at the bottom of the page #}
+{% set docsUrl = "https://github.com/wideweb/print-plugin/blob/master/README.md" %}
+
+{# The title of this CP section #}
+{% set title = "Print Plugin" %}
+
+{# The URL to this plugin's base CP section #}
+{% set pluginCpUrl = url('print-plugin') %}
+
+{# Get a URL to an image in our AssetBundle #}
+{% set iconUrl = view.getAssetManager().getPublishedUrl('@wideweb/printplugin/assetbundles/indexcpsection/dist', true) ~ '/img/Index-icon.svg' %}
+
+{# Content that should appear in the page header#}
+{% set extraPageHeaderHtml %}
+<div class="buttons">
+  <a href="{{ pluginCpUrl }}" class="btn submit add icon">{{ "Click Me!"|t('print-plugin') }}</a>
+</div>
+{% endset %}
+{% set id = craft.app.request.getSegments()|last %}
+
+{% set tabs = {
+content:            { label: "Content"|t, url: url('print-plugin/'~ id) },
+outputs:         { label: "Outputs"|t, url: url('print-plugin/outputs/' ~ id) },
+fields:         { label: "Fields"|t, url: url('print-plugin/fields/' ~ id) },
+} %}
+{# The content of the CP Section#}
+{% set selectedTab = 'outputs' %}
+{% set content %}
+
+{% set pdf = craft.printPlugin.getPdfById(id) %}
+{% set fields = craft.printPlugin.getFieldsFromUserModel() %}
+<h2>{{ "Fields Mapping" }}<a href="print-plugin/list-pdfs" class="create-btn"><p>List</p></a></h2>
+{% set fieldsPlugins = craft.printPlugin.getAllFields() %}
+{% set fieldsPdf = pdf.fields %}
+    {% if fieldsPdf %}
+        {% set fieldsPdf = pdf.fields|json_encode %}
+    {% endif %}
+<form action="/actions/print-plugin/default/update-pdf-outputs" method="post">
+  {{ csrfInput() }}
+  {% for fieldPlugin in fieldsPlugins if fieldPlugin.handle in fieldsPdf %}
+  <div class="fieldset">
+    <h4>{{ fieldPlugin.title }}</h4>
+      <div class="select">
+
+      <select
+        name="{{ fieldPlugin.handle }}"
+        data-name="{{ fieldPlugin.handle }}"
+    >
+      {% if fieldPlugin.type == 'text' %}
+      {% for field in fields if field.className != 'craft\\fields\\Matrix' and field.className != 'craft\\fields\\Assets' and field.className != 'craft\\fields\\RadioButtons' %}
+        <option value="{{ field.handle }}"
+                {% if pdf.outputs|json_decode and pdf.outputs|json_decode[fieldPlugin.handle].content is defined and pdf.outputs|json_decode[fieldPlugin.handle].content == field.handle %} selected {% endif %}>
+            {{ field.name }}</option>
+      {% endfor %}
+      {% elseif fieldPlugin.type == 'asset' %}
+      {% for field in fields if field.className == 'craft\\fields\\Assets' %}
+      <option value="{{ field.handle }}" {% if pdf.outputs|json_decode and pdf.outputs|json_decode[fieldPlugin.handle].content is defined and pdf.outputs|json_decode[fieldPlugin.handle].content == field.handle %} selected {% endif %}>{{ field.name }}</option>
+      {% endfor %}
+      {% endif %}
+      <option value="custom"
+              {% if pdf.outputs|json_decode and pdf.outputs|json_decode[fieldPlugin.handle].type is defined and pdf.outputs|json_decode[fieldPlugin.handle].type == 'custom' %}
+      selected
+              {% endif %}>
+          Custom field
+      </option>
+    </select>
+
+    </div>
+
+    <textarea
+        id="{{ fieldPlugin.handle }}-textarea"
+        data-name="{{ fieldPlugin.handle }}"
+        name="custom_{{ fieldPlugin.handle }}"
+        value="{{ fieldPlugin.handle }}"
+        rows="3"
+        autocapitalize="sentences"
+    >{% if pdf.outputs|json_decode and pdf.outputs|json_decode[fieldPlugin.handle].type is defined and pdf.outputs|json_decode[fieldPlugin.handle].type == 'custom' %} {{ pdf.outputs|json_decode[fieldPlugin.handle].content }} {% endif %}</textarea>
+  </div>
+  {% endfor %}
+  <div class="btns-wrap --grey">
+    <input type="hidden" name="id" value="{{ id }}">
+    <input type="submit" value="Update">
+  </div>
+</form>
+
+<form action="/actions/print-plugin/default/print-pdf-by-id" method="post">
+  {{ csrfInput() }}
+  <div class="btns-wrap">
+    <input type="hidden" name="id" value="{{ id }}">
+  </div>
+</form>
+
+<h3>Template preview</h3>
+<div id="template-redactor-view"
+     data-id="{{ id }}"
+></div>
+
+<style>
+  h3 {
+    padding-right: 4px;
+  }
+  #template-redactor-view {
+    max-width: calc(100vw - 322px);
+  }
+  #template-redactor-view.--active {
+    box-shadow: 0 0 0 1px rgba(205, 216, 228, 0.25), 0 2px 12px rgba(205, 216, 228, 0.5);
+  }
+  #template-redactor-view.--active > div {
+    /*transform: scale(.4);*/
+    transform-origin: left top;
+  }
+  .btns-wrap input {
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    padding: 7px 14px;
+    border: none;
+    text-align: center;
+    white-space: nowrap;
+    user-select: none;
+    cursor: pointer;
+    box-sizing: border-box;
+    appearance: none;
+    outline: none;
+    color: #fff;
+    font-size: inherit;
+    background-color: #e5422b;
+    margin-bottom: 12px;
+  }
+  .--grey input {
+    background-color: #8b96a2 !important;
+  }
+  .fieldset h4 {
+    margin-bottom: 8px;
+    color: #3f4d5a;
+    padding-left: 4px;
+  }
+  .fieldset textarea {
+    display: none;
+    min-width: 500px;
+    box-sizing: border-box;
+    resize: none;
+    margin-top: 12px;
+    min-height: 74px;
+    padding: 6px 9px;
+    border-radius: 3px;
+    border: 1px solid rgba(96, 125, 159, 0.25);
+    background-color: #fbfcfe;
+    box-shadow: inset 0 1px 4px -1px rgba(96, 125, 159, 0.25);
+    background-clip: padding-box;
+    font-size: 14px;
+    line-height: 20px;
+    color: #3f4d5a;
+    appearance: none;
+  }
+  .fieldset textarea:focus {
+    outline: none;
+    border-color: rgba(96, 125, 159, 0.8);
+  }
+  .fieldset textarea.--active {
+    display: block;
+  }
+  .fieldset select {
+    padding: 7px 22px 7px 10px;
+    display: block;
+    position: relative;
+    border: none;
+    font-size: 14px;
+    line-height: 20px;
+    color: #3f4d5a;
+    background-color: rgba(96, 125, 159, 0.25);
+    appearance: none;
+    white-space: pre;
+    border-radius: 5px;
+    min-width: 356px;
+  }
+  .fieldset .select:after {
+    display: block;
+    content: '';
+    width: 5px;
+    height: 5px;
+    border: solid #7b8793;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    position: absolute;
+    z-index: 1;
+    top: calc(50% - 5px);
+    right: 9px;
+    user-select: none;
+    pointer-events: none;
+  }
+  .fieldset select option {
+    line-height: 24px;
+  }
+  .fieldset {
+    margin-bottom: 12px;
+  }
+  .submit-btn {
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    padding: 7px 14px;
+    border: none;
+    text-align: center;
+    white-space: nowrap;
+    user-select: none;
+    cursor: pointer;
+    box-sizing: border-box;
+    appearance: none;
+    outline: none;
+    color: #fff;
+    font-size: inherit;
+    background-color: #e5422b;
+  }
+</style>
+
+{% endset %}

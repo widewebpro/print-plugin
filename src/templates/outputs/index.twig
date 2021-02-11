@@ -1,0 +1,51 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Print Plugin plugin for Craft CMS 3.x
+ *
+ * Print Plugin index.twig
+ *
+ * @author    WideWeb
+ * @copyright Copyright (c) 2020 WideWeb
+ * @link      WideWeb.pro
+ * @package   PrintPlugin
+ * @since     1.0.0
+ */
+#}
+
+{% extends "_layouts/cp" %}
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("wideweb\\printplugin\\assetbundles\\printplugin\\PrintPluginAsset") %}
+{% do view.registerAssetBundle("wideweb\\printplugin\\assetbundles\\indexcpsection\\IndexCPSectionAsset") %}
+
+{# Link for the ? icon at the bottom of the page #}
+{% set docsUrl = "https://github.com/wideweb/print-plugin/blob/master/README.md" %}
+
+{# The title of this CP section #}
+{% set title = "Print Plugin" %}
+
+{# The URL to this plugin's base CP section #}
+{% set pluginCpUrl = url('print-plugin') %}
+
+{# Get a URL to an image in our AssetBundle #}
+{% set iconUrl = view.getAssetManager().getPublishedUrl('@wideweb/printplugin/assetbundles/indexcpsection/dist', true) ~ '/img/Index-icon.svg' %}
+
+{# Content that should appear in the page header#}
+{% set extraPageHeaderHtml %}
+<div class="buttons">
+    <a href="{{ pluginCpUrl }}" class="btn submit add icon">{{ "Click Me!"|t('print-plugin') }}</a>
+</div>
+{% endset %}
+{% set tabs = {
+content:            { label: "Content"|t, url: url('print-plugin/create-pdf') },
+outputs:         { label: "Outputs"|t, url: url('print-plugin/outputs') },
+} %}
+{# The content of the CP Section#}
+{% set selectedTab = 'outputs' %}
+{% set content %}
+
+<h2>{{ "Create new Pdf" }}<a href="print-plugin/list-pdfs" class="create-btn"><p>List</p></a></h2>
+
+
+{% endset %}

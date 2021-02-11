@@ -1,0 +1,309 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Print Plugin plugin for Craft CMS 3.x
+ *
+ * Print Plugin index.twig
+ *
+ * @author    WideWeb
+ * @copyright Copyright (c) 2020 WideWeb
+ * @link      WideWeb.pro
+ * @package   PrintPlugin
+ * @since     1.0.0
+ */
+#}
+
+{% extends "_layouts/cp" %}
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("wideweb\\printplugin\\assetbundles\\printplugin\\PrintPluginAsset") %}
+{% do view.registerAssetBundle("wideweb\\printplugin\\assetbundles\\indexcpsection\\IndexCPSectionAsset") %}
+
+{# Link for the ? icon at the bottom of the page #}
+{% set docsUrl = "https://github.com/wideweb/print-plugin/blob/master/README.md" %}
+
+{# The title of this CP section #}
+{% set title = "Print Plugin" %}
+
+{# The URL to this plugin's base CP section #}
+{% set pluginCpUrl = url('print-plugin') %}
+
+{# Get a URL to an image in our AssetBundle #}
+{% set iconUrl = view.getAssetManager().getPublishedUrl('@wideweb/printplugin/assetbundles/indexcpsection/dist', true) ~ '/img/Index-icon.svg' %}
+
+{# Content that should appear in the page header#}
+{% set extraPageHeaderHtml %}
+<div class="buttons">
+  <a href="{{ pluginCpUrl }}" class="btn submit add icon">{{ "Click Me!"|t('print-plugin') }}</a>
+</div>
+{% endset %}
+
+{# The content of the CP Section#}
+{% set content %}
+{#<h2>{{ "Create my Pdf" }}</h2>#}
+{#<a target="_blank" href="/actions/print-plugin/default" class="create-btn">Create</a>#}
+{#<br>#}
+{#<a href="print-plugin/list-pdfs" class="create-btn">List</a>#}
+{#<br>#}
+{#<a href="print-plugin/fields" class="create-btn">Fields Settings</a>#}
+{#<h2>#}
+<h2>{{ "Lists Pdfs" }}</h2>
+
+<div class="btn-wrap --content-left">
+  <a href="{{ url('print-plugin/create-pdf') }}" class="create-new-pdf-btn">Create</a>
+</div>
+
+{% set pdfs = craft.printPlugin.getAllPdf('any') %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.2.0/jspdf.umd.min.js"></script>
+
+
+<table id="pdfs-list" class="data">
+  <thead>
+  <tr>
+    <th style="width:10%" scope="col" data-attribute="title" class="orderable">Title</th>
+    <th style="width:10%" scope="col" data-attribute="title" class="orderable">Type</th>
+    <th style="width:10%" scope="col" data-attribute="title" class="orderable">Settings</th>
+    <th style="width:10%" scope="col" data-attribute="title" class="orderable">Date Created</th>
+    <th style="width:10%" scope="col" data-attribute="title" class="orderable">Generate PDF</th>
+    <th style="width:10%" scope="col" data-attribute="title" class="orderable">Generate JPEG</th>
+    <th style="width:10%" scope="col" data-attribute="title" class="orderable">Delete</th>
+    <th style="width:10%" scope="col" data-attribute="title" class="orderable">Status</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for pdf in pdfs %}
+  <tr data-id="{{ pdf.id }}" data-name=" item.address ">
+    <td>
+      <a href="{{url('print-plugin/')}}/{{ pdf.id }}">
+        {{ pdf.title }}
+      </a>
+    </td>
+    <td>
+      {{ pdf.type|capitalize }}
+    </td>
+    <td>
+      {% for key, value in pdf.settings|json_decode if value %}
+      <div> {{ key|capitalize }} - {{ value|capitalize }}</div>
+      {% endfor %}
+    </td>
+    <td>
+      {{ pdf.dateCreated }}
+    </td>
+
+    <td>
+      <button class="create-pdf"
+              data-id="{{ pdf.id }}"
+      >
+        Create PDF
+        <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+      </button>
+    </td>
+
+    <td>
+      <button class="create-jpeg"
+              data-id="{{ pdf.id }}"
+      >
+        Create JPEG
+        <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+      </button>
+      <a
+          id="download-link-{{ pdf.id }}"
+          style="display: none"
+          download="{{ pdf.title }}"
+          href="/"
+      ></a>
+    </td>
+
+    <td>
+      <a class="create-pdf"
+         href="/actions/print-plugin/default/delete-pdf-by-id?id={{ pdf.id }}"
+      >Delete PDF</a>
+    </td>
+    <td>
+      {% if pdf.enabled == 0 %}
+      <a class="create-pdf"
+         href="/actions/print-plugin/default/enable-pdf?id={{ pdf.id }}"
+      >Enable PDF</a>
+          {% elseif pdf.enabled == 1 %}
+        <a class="create-pdf"
+           href="/actions/print-plugin/default/disable-pdf?id={{ pdf.id }}"
+        >Disable PDF</a>
+      {% endif %}
+    </td>
+
+  </tr>
+{% endfor %}
+
+  </tbody>
+
+</table>
+
+<div class="pdf-container-by-print"></div>
+
+<style>
+  .--content-left {
+    display: flex;
+    justify-content: flex-end;
+  }
+  .btn-wrap {
+    margin-bottom: 12px;
+  }
+  a.create-pdf,
+  button.create-pdf,
+  button.create-jpeg,
+  .create-new-pdf-btn {
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    padding: 7px 35px;
+    border: none;
+    text-align: center;
+    white-space: nowrap;
+    user-select: none;
+    cursor: pointer;
+    box-sizing: border-box;
+    appearance: none;
+    outline: none;
+    color: #fff;
+    font-size: inherit;
+    background-color: #e5422b;
+  }
+  a.create-pdf.create-pdf {
+    color: #394b60;
+    background-color: rgba(96, 125, 159, 0.25);
+    text-decoration: none;
+  }
+  .pdf-container-by-print {
+    position: absolute;
+    transform: translateX(6000px);
+    background-color: #fff;
+  }
+  .create-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 51px;
+    background: #75D4E8;
+    box-shadow: 3px 3px 5px -1px rgba(0, 0, 0, 0.15);
+    width: 171px;
+    border-radius: 21px;
+    padding: 0;
+    margin: 0;
+    min-width: 190px;
+    font-family: 'Comfortaa',sans-serif;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 18px;
+    border: 1px solid transparent;
+    color: #fff;
+    transition: all 0.3s ease;
+    text-decoration: none !important;
+  }
+  .create-btn:hover {
+    text-decoration: none !important;
+    background: #fff;
+    box-shadow: 3px 3px 5px -1px rgba(0, 0, 0, 0.15);
+    color: #75D4E8;
+    border: 1px solid #75D4E8;
+  }
+  .create-btn:active {
+    box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.15);
+  }
+
+/*     Loader     */
+  .lds-roller {
+    width: 80px;
+    height: 80px;
+    transform: scale(.3);
+    transform-origin: top center;
+    position: absolute;
+    right: 12px;
+    top: 15px;
+    display: none;
+  }
+  button.--disabled .lds-roller {
+    display: inline-block;
+  }
+  .lds-roller div {
+    animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    transform-origin: 40px 40px;
+  }
+  .lds-roller div:after {
+    content: " ";
+    display: block;
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #fff;
+    margin: -4px 0 0 -4px;
+  }
+  .lds-roller div:nth-child(1) {
+    animation-delay: -0.036s;
+  }
+  .lds-roller div:nth-child(1):after {
+    top: 63px;
+    left: 63px;
+  }
+  .lds-roller div:nth-child(2) {
+    animation-delay: -0.072s;
+  }
+  .lds-roller div:nth-child(2):after {
+    top: 68px;
+    left: 56px;
+  }
+  .lds-roller div:nth-child(3) {
+    animation-delay: -0.108s;
+  }
+  .lds-roller div:nth-child(3):after {
+    top: 71px;
+    left: 48px;
+  }
+  .lds-roller div:nth-child(4) {
+    animation-delay: -0.144s;
+  }
+  .lds-roller div:nth-child(4):after {
+    top: 72px;
+    left: 40px;
+  }
+  .lds-roller div:nth-child(5) {
+    animation-delay: -0.18s;
+  }
+  .lds-roller div:nth-child(5):after {
+    top: 71px;
+    left: 32px;
+  }
+  .lds-roller div:nth-child(6) {
+    animation-delay: -0.216s;
+  }
+  .lds-roller div:nth-child(6):after {
+    top: 68px;
+    left: 24px;
+  }
+  .lds-roller div:nth-child(7) {
+    animation-delay: -0.252s;
+  }
+  .lds-roller div:nth-child(7):after {
+    top: 63px;
+    left: 17px;
+  }
+  .lds-roller div:nth-child(8) {
+    animation-delay: -0.288s;
+  }
+  .lds-roller div:nth-child(8):after {
+    top: 56px;
+    left: 12px;
+  }
+  @keyframes lds-roller {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+</style>
+
+{% endset %}

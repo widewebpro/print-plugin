@@ -1,0 +1,71 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Print Plugin plugin for Craft CMS 3.x
+ *
+ * Print Plugin Settings.twig
+ *
+ * @author    WideWeb
+ * @copyright Copyright (c) 2020 WideWeb
+ * @link      WideWeb.pro
+ * @package   PrintPlugin
+ * @since     1.0.0
+ */
+#}
+
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("wideweb\\printplugin\\assetbundles\\printplugin\\PrintPluginAsset") %}
+
+{% set folders = craft.app.volumes.getAllVolumes() %}
+{% set options = [] %}
+{% for folder in folders %}
+    {% set id = folder.id %}
+    {% set name = folder.name %}
+    {% set options = options|merge({ (0~id) : name }) %}
+{% endfor %}
+
+{{ forms.selectField({
+    label: 'Choice folder(only s3)',
+    id: 'choiceFolder',
+    name: 'choiceFolder',
+    value: settings.choiceFolder,
+    options: options
+})
+}}
+
+<h3>Choice Formats For PDFs</h3>
+{{ forms.checkboxGroup({
+    placeholder: 'Choice Formats For PDFs',
+    id: 'choiceFormat',
+    name: 'choiceFormat',
+    values: settings.choiceFormat,
+    options: {'a' : 'A', 'px' : 'PX', 'cm' : 'CM'}
+})
+}}
+
+{{ forms.lightswitchField({
+	label: "Enable Comming Soon"|t('entry-count'),
+instructions: "If enable - disabled pdfs and files be outputs on front end",
+name: 'comingSoon',
+on: settings.comingSoon,
+first: true,
+})
+}}
+
+{{ forms.lightswitchField({
+    label: "Enable Logic For User Groups"|t('entry-count'),
+    instructions: "If enable - you can choice which user groups will see each PDF or file",
+    name: 'choiceUserGroup',
+    on: settings.choiceUserGroup,
+    first: true,
+})
+}}
+
+{{ forms.lightswitchField({
+    label: "Enable Choice File type for download",
+    name: 'choiceFormatFile',
+    on: settings.choiceFormatFile,
+    first: true,
+})
+}}

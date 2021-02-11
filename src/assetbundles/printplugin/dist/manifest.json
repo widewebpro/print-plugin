@@ -1,0 +1,6 @@
+{
+  "PrintPlugin.js": "js/PrintPlugin.js",
+  "PrintPlugin.js.map": "js/PrintPlugin.js.map",
+  "vendors~PrintPlugin.js": "js/vendors~PrintPlugin.js",
+  "vendors~PrintPlugin.js.map": "js/vendors~PrintPlugin.js.map"
+}

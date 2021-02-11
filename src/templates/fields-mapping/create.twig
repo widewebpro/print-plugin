@@ -1,0 +1,118 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Print Plugin plugin for Craft CMS 3.x
+ *
+ * Print Plugin index.twig
+ *
+ * @author    WideWeb
+ * @copyright Copyright (c) 2020 WideWeb
+ * @link      WideWeb.pro
+ * @package   PrintPlugin
+ * @since     1.0.0
+ */
+#}
+
+{% extends "_layouts/cp" %}
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("wideweb\\printplugin\\assetbundles\\printplugin\\PrintPluginAsset") %}
+{% do view.registerAssetBundle("wideweb\\printplugin\\assetbundles\\indexcpsection\\IndexCPSectionAsset") %}
+
+{# Link for the ? icon at the bottom of the page #}
+{% set docsUrl = "https://github.com/wideweb/print-plugin/blob/master/README.md" %}
+
+{# The title of this CP section #}
+{% set title = "Print Plugin" %}
+
+{# The URL to this plugin's base CP section #}
+{% set pluginCpUrl = url('print-plugin') %}
+
+{# Get a URL to an image in our AssetBundle #}
+{% set iconUrl = view.getAssetManager().getPublishedUrl('@wideweb/printplugin/assetbundles/indexcpsection/dist', true) ~ '/img/Index-icon.svg' %}
+
+{# Content that should appear in the page header#}
+{% set extraPageHeaderHtml %}
+<div class="buttons">
+  <a href="{{ pluginCpUrl }}" class="btn submit add icon">{{ "Click Me!"|t('print-plugin') }}</a>
+</div>
+{% endset %}
+
+{# The content of the CP Section#}
+{% set content %}
+{% set selectedSubnavItem = 'fields' %}
+{# The content of the CP Section#}
+{% set selectedTab = 'content' %}
+<h2>{{ "Create Field" }}<a href="{{url('print-plugin/fields')}}" class="create-btn"><p>List Fields</p></a></h2>
+<form action="/actions/print-plugin/default/create-field" method="POST">
+  {{ csrfInput() }}
+
+  <div class="fieldset">
+    <div>
+      <label for="title">
+        <h4> Title</h4>
+      </label>
+    </div>
+    <div>
+      <input type="text" name="title">
+    </div>
+  </div>
+
+  <div class="fieldset">
+    <div>
+      <label for="handle">
+        <h4>Handle</h4>
+      </label>
+    </div>
+    <div>
+      <input type="text" name="handle">
+    </div>
+  </div>
+
+  <div class="fieldset">
+    <div>
+      <label for="type">
+        <h4>Type</h4>
+      </label>
+    </div>
+    <select name="type"> <!--Supplement an id here instead of using 'name'-->
+      <option value="text">Text</option>
+      <option value="asset">Asset</option>
+    </select>
+  </div>
+
+  <input type="submit"
+         value="Create"
+         class="submit-btn"
+  >
+</form>
+
+<style>
+  .fieldset {
+    margin-bottom: 12px;
+  }
+  label {
+    margin-bottom: 4px;
+    color: #3f4d5a;
+    padding-left: 4px;
+  }
+  .submit-btn {
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    padding: 7px 14px;
+    border: none;
+    text-align: center;
+    white-space: nowrap;
+    user-select: none;
+    cursor: pointer;
+    box-sizing: border-box;
+    appearance: none;
+    outline: none;
+    color: #fff;
+    font-size: inherit;
+    background-color: #e5422b;
+  }
+</style>
+
+{% endset %}

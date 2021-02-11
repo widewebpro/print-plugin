@@ -1,0 +1,41 @@
+{
+    "name": "wideweb/print-plugin",
+    "description": "Print Plugin",
+    "type": "craft-plugin",
+    "version": "1.0.0",
+    "keywords": [
+        "craft",
+        "cms",
+        "craftcms",
+        "craft-plugin",
+        "print plugin"
+    ],
+    "support": {
+        "docs": "https://github.com/wideweb/print-plugin/blob/master/README.md",
+        "issues": "https://github.com/wideweb/print-plugin/issues"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "WideWeb",
+            "homepage": "https://WideWeb.pro"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+          "wideweb\\printplugin\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "Print Plugin",
+        "handle": "print-plugin",
+        "developer": "WideWeb",
+        "developerUrl": "https://WideWeb.pro",
+        "documentationUrl": "https://github.com/wideweb/print-plugin/blob/master/README.md",
+        "changelogUrl": "https://raw.githubusercontent.com/wideweb/print-plugin/master/CHANGELOG.md",
+        "components": {
+            "printPluginService": "wideweb\\printplugin\\services\\PrintPluginService"
+        },
+        "class": "wideweb\\printplugin\\PrintPlugin"
+    }
+}
