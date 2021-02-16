@@ -114,7 +114,7 @@ class Install extends Migration
                     'outputs' => $this->longText(),
                     'enabled' => $this->integer()->notNull()->defaultValue(1),
                     'userGroup' => $this->string()->defaultValue('all'),
-                    'fields' => $this->string(),
+                    'fields' => $this->longText(),
                     'file' => $this->string(),
                     'fileType' => $this->string()->defaultValue('pdf'),
                     'previewImage' => $this->string(),
