@@ -89,6 +89,7 @@ class FrontController extends Controller
         }else{
             $pdfs = [];
         }
+        return \GuzzleHttp\json_encode($pdfs);
     }
 
     public function actionGetPdfById($id)
