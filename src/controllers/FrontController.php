@@ -77,14 +77,18 @@ class FrontController extends Controller
         }else{
             $status = 1;
         }
+        $currentUserGroups = Craft::$app->user->getIdentity()->getGroups();
+        $groups = ['all'];
+        foreach ($currentUserGroups as $currentUserGroup){
+            array_push($groups, $currentUserGroup->handle);
+        }
         if ($status == 'any'){
-            $pdfs = (new Query())->select("*")->from('{{%print_pdfs}}')->all();
+            $pdfs = (new Query())->select("*")->from('{{%print_pdfs}}')->where(['userGroup' => $groups])->all();
         }elseif($status == 1){
-            $pdfs = (new Query())->select("*")->from('{{%print_pdfs}}')->where(['enabled' => 1])->all();
+            $pdfs = (new Query())->select("*")->from('{{%print_pdfs}}')->where(['enabled' => 1, 'userGroup' => $groups])->all();
         }else{
             $pdfs = [];
         }
-        return \GuzzleHttp\json_encode($pdfs);
     }
 
     public function actionGetPdfById($id)
