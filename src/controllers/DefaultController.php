@@ -243,6 +243,7 @@ class DefaultController extends Controller
         $userGroup = Craft::$app->request->getBodyParam('userGroup');
         $typeFile = Craft::$app->request->getBodyParam('typeFile');
         $previewImage = $_FILES['previewImage'];
+        $file = $_FILES['file'];
         if ($previewImage and $previewImage['size'] != 0){
             $file_name = rand(0, 99999999) . $previewImage['name'];
             $folderId = Craft::$app->plugins->getPlugin('print-plugin')->getSettings()->choiceFolder;
@@ -259,6 +260,24 @@ class DefaultController extends Controller
             Craft::$app->db->createCommand()->update('{{%print_pdfs}}',
                 [
                     'previewImage' => trim($previewImage),
+                ], ['id' => $id])->execute();
+        }
+        if ($file and $file['size'] != 0){
+            $file_name = rand(0, 99999999) . $file['name'];
+            $folderId = Craft::$app->plugins->getPlugin('print-plugin')->getSettings()->choiceFolder;
+            $asset = new Asset();
+            $asset->tempFilePath = $file['tmp_name'];
+            $asset->filename = $file_name;
+            $asset->title = $file_name;
+            $asset->newFolderId = VolumeFolder::find()->where('volumeId = '.$folderId )->one()->id;
+            $asset->volumeId = $folderId;
+            $asset->avoidFilenameConflicts = true;
+            $asset->setScenario(Asset::SCENARIO_CREATE);
+            Craft::$app->getElements()->saveElement($asset);
+            $file = $asset->getUrl();
+            Craft::$app->db->createCommand()->update('{{%print_pdfs}}',
+                [
+                    'file' => trim($file),
                 ], ['id' => $id])->execute();
         }
         if ($typeOfSize and $typeOfSize == 'a' and $size and $id){
