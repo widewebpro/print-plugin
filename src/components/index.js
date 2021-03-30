@@ -1,0 +1,1 @@
+export { default as PrintPluginOutput } from './PrintPluginOutput.vue'
