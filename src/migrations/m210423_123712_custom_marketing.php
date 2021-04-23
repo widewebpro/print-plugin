@@ -122,7 +122,7 @@ class m210423_123712_custom_marketing extends Migration
                     'jpg' => $this->string(),
                     'html' => $this->string(),
 //                    'fileType' => $this->string()->defaultValue('pdf'),
-                    'previewImage' => $this->string(),
+                    'previewImage' => $this->longText(),
                     'dateCreated' => $this->dateTime()->notNull(),
                     'dateUpdated' => $this->dateTime()->notNull(),
                     'uid' => $this->uid(),
