@@ -153,6 +153,7 @@ class MarketingController extends Controller
         $jpg = $_FILES['jpg'];
         $html = $_FILES['html'];
         $previewImage = $_FILES['previewImage'];
+        $query = [];
         $query = $this->addToQuery('vendor', $vendor, $query);
         $query = $this->addToQuery('delivery_time', $delivery_time, $query);
         $query = $this->addToQuery('title', $title, $query);
