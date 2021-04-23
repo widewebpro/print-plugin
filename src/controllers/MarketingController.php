@@ -237,15 +237,15 @@ class MarketingController extends Controller
         if (!$customer){
             return false;
         }
-        $firstName = Craft::$app->request->getBodyParam('firstName');
-        $lastName = Craft::$app->request->getBodyParam('lastName');
-        $email = Craft::$app->request->getBodyParam('email');
-        $phone = Craft::$app->request->getBodyParam('phone');
-        $state = Craft::$app->request->getBodyParam('state');
-        $city = Craft::$app->request->getBodyParam('city');
-        $zip = Craft::$app->request->getBodyParam('zip');
-        $address1 = Craft::$app->request->getBodyParam('address1');
-        $address2 = Craft::$app->request->getBodyParam('address2');
+        $firstName = Craft::$app->request->getParam('firstName');
+        $lastName = Craft::$app->request->getParam('lastName');
+        $email = Craft::$app->request->getParam('email');
+        $phone = Craft::$app->request->getParam('phone');
+        $state = Craft::$app->request->getParam('state');
+        $city = Craft::$app->request->getParam('city');
+        $zip = Craft::$app->request->getParam('zip');
+        $address1 = Craft::$app->request->getParam('address1');
+        $address2 = Craft::$app->request->getParam('address2');
 
         $customerId = $customer->reference;
         $fullPrice = $marketing['price'] * $count;
