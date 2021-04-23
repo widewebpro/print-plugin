@@ -79,7 +79,7 @@
             <label for="price">
                 <h4>Price per unit</h4>
             </label>
-            <input type="text" name="price" placeholder="Price per unit" value="{{ marketing.price }}">
+            <input type="number" name="price" placeholder="Price per unit" value="{{ marketing.price }}">
         </div>
         <div class="fieldset">
             <label for="title">
@@ -115,7 +115,7 @@
             <label for="shipping_cost">
                 <h4>Shipping cost</h4>
             </label>
-            <input type="text" name="shipping_cost" placeholder="Shipping cost" value="{{ marketing.shipping_cost }}">
+            <input type="number" name="shipping_cost" placeholder="Shipping cost" value="{{ marketing.shipping_cost }}">
         </div>
         <div class="fieldset">
             <label class="submit-btn --grey">
@@ -141,7 +141,7 @@
         <div class="fieldset">
             <label class="submit-btn --grey">
                 Upload Preview Image
-                <input style="display: none;" type="file" name="previewImage">
+                <input style="display: none;" type="file" name="previewImage" multiple>
             </label>
         </div>
 

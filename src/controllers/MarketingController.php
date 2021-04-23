@@ -11,21 +11,13 @@
 namespace wideweb\printplugin\controllers;
 
 use craft\elements\Asset;
-use craft\elements\User;
-use craft\fields\Assets;
 use craft\helpers\UrlHelper;
 use craft\records\VolumeFolder;
-use Dompdf\Dompdf;
-use Dompdf\Options;
-use function GuzzleHttp\uri_template;
-use mikehaertl\wkhtmlto\Pdf;
-use Mpdf\Mpdf;
-use Spipu\Html2Pdf\Html2Pdf;
-use wideweb\printplugin\PrintPlugin;
 use Craft;
 use craft\web\Controller;
-use wideweb\printplugin\variables\PrintPluginVariable;
 use yii\db\Query;
+use craft\commerce\Plugin;
+
 
 /**
  * Default Controller
@@ -59,7 +51,7 @@ class MarketingController extends Controller
      * @access protected
      */
     protected $allowAnonymous = ['create-marketing', 'delete-marketing-by-id', 'enable-marketing', 'disable-marketing',
-        'update-marketing', 'get-all-marketing'];
+        'update-marketing', 'get-all-marketing', 'pay-for-custom-marketing'];
 
     // Public Methods
     // =========================================================================
@@ -105,7 +97,7 @@ class MarketingController extends Controller
         $query = $this->addFileToQuery('pdf', $pdf, $query);
         $query = $this->addFileToQuery('jpg', $jpg, $query);
         $query = $this->addFileToQuery('html', $html, $query);
-        $query = $this->addFileToQuery('previewImage', $previewImage, $query);
+        $query = $this->addFilesToQuery('previewImage', $previewImage, $query);
         Craft::$app->db->createCommand()->update('{{%print_marketing}}', $query, ['id' => $id])->execute();
         return Craft::$app->getResponse()->redirect(UrlHelper::cpUrl('/' . Craft::$app->config->general->cpTrigger .'/print-plugin/marketing/' . $id));
 
@@ -161,7 +153,6 @@ class MarketingController extends Controller
         $jpg = $_FILES['jpg'];
         $html = $_FILES['html'];
         $previewImage = $_FILES['previewImage'];
-        $query = [];
         $query = $this->addToQuery('vendor', $vendor, $query);
         $query = $this->addToQuery('delivery_time', $delivery_time, $query);
         $query = $this->addToQuery('title', $title, $query);
@@ -177,7 +168,7 @@ class MarketingController extends Controller
         $query = $this->addFileToQuery('pdf', $pdf, $query);
         $query = $this->addFileToQuery('jpg', $jpg, $query);
         $query = $this->addFileToQuery('html', $html, $query);
-        $query = $this->addFileToQuery('previewImage', $previewImage, $query);
+        $query = $this->addFilesToQuery('previewImage', $previewImage, $query);
         Craft::$app->db->createCommand()->insert('{{%print_marketing}}', $query)->execute();
         return Craft::$app->getResponse()->redirect(UrlHelper::cpUrl('/' . Craft::$app->config->general->cpTrigger .'/print-plugin/marketing/'));
     }
@@ -232,5 +223,81 @@ class MarketingController extends Controller
         return \GuzzleHttp\json_encode($marketing);
     }
 
+    public function actionPayForCustomMarketing($marketingId, $count = 1)
+    {
+        $this->requireLogin();
+        $marketing = (new Query())->select("*")->from('{{%print_marketing}}')->where(['id' => $marketingId])->one();
+        $secretKey = Plugin::getInstance()->gateways->getGatewayByHandle('sripe')->settings['apiKey'];
+        $stripe = new \Stripe\StripeClient(
+            $secretKey
+        );
+        $user = Craft::$app->getUser()->getIdentity();
+        $customer = \craft\commerce\stripe\Plugin::getInstance()->getCustomers()->getCustomer(2, $user);
+        if (!$customer){
+            return false;
+        }
+        $customerId = $customer->reference;
+        $fullPrice = $marketing['price'] * $count;
+        $fullPrice = $fullPrice + $marketing['shipping_cost'];
+        $fullPrice = $fullPrice * 100;
+        $title = $marketing['title'];
+        $html = "User with craftId $user->id and email $user->email, paid for Custom Marketing '$title' id=$marketingId count=$count";
+        $payment = $stripe->paymentIntents->create([
+            'amount' => $fullPrice,
+            'currency' => 'usd',
+            'customer' => $customerId,
+            'payment_method_types' => ['card'],
+            'description' => $html,
+            'metadata' => ['payFor' => 'Custom Marketing']
+        ]);
+        $stripeResponce = $stripe->paymentIntents->confirm(
+            $payment->id,
+            ['payment_method' => 'pm_card_visa']
+        );
+        if ($stripeResponce->status == 'succeeded' and $marketing['vendor']) {
+            $this->sendEmail($html, $user->email, $marketing['vendor']);
+            return true;
+        }elseif ($stripeResponce->status){
+            return true;
+        }
+        return false;
+    }
+
+    public function sendEmail($html, $emailUser, $vendorEmail)
+    {
+        Craft::$app
+            ->getMailer()
+            ->compose()
+            ->setTo($vendorEmail)
+            ->setSubject($emailUser . ' - placed for Custom Marketing')
+            ->setHtmlBody($html)
+            ->send();
+    }
+
+    public function addFilesToQuery($name, $files, $query)
+    {
+        $total = count($files['name']);
+        $arrayOfImages = [];
+// Loop through each file
+        for( $i=0 ; $i < $total ; $i++ ) {
+
+            $file_name = rand(0, 99999999) . $files['name'][$i];
+            $folderId = Craft::$app->plugins->getPlugin('print-plugin')->getSettings()->choiceFolder;
+            $asset = new Asset();
+            $asset->tempFilePath = $files['tmp_name'][$i];
+            $asset->filename = $file_name;
+            $asset->title = $file_name;
+            $asset->newFolderId = VolumeFolder::find()->where('volumeId = '.$folderId )->one()->id;
+            $asset->volumeId = $folderId;
+            $asset->avoidFilenameConflicts = true;
+            $asset->setScenario(Asset::SCENARIO_CREATE);
+            Craft::$app->getElements()->saveElement($asset);
+            $arrayOfImages[] = $asset->getUrl();
+
+        }
+        $query[$name] = \GuzzleHttp\json_encode($arrayOfImages);
+
+        return $query;
+    }
 
 }

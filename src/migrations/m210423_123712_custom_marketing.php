@@ -30,7 +30,7 @@ use craft\db\Migration;
  * @package   SocialMediaPosts
  * @since     1.0.0
  */
-class m210423_093251_my_migration_name extends Migration
+class m210423_123712_custom_marketing extends Migration
 {
     // Public Properties
     // =========================================================================
@@ -109,12 +109,12 @@ class m210423_093251_my_migration_name extends Migration
                     'vendor' => $this->string(),
                     'delivery_time' => $this->string(),
                     'title' => $this->string(),
-                    'price' => $this->string(),
+                    'price' => $this->integer(),
                     'description' => $this->text(),
                     'product_size' => $this->text(),
                     'specs' => $this->text(),
                     'order_min' => $this->text(),
-                    'shipping_cost' => $this->text(),
+                    'shipping_cost' => $this->integer(),
                     'type' => $this->string(),
                     'enabled' => $this->integer()->notNull()->defaultValue(1),
                     'userGroup' => $this->string()->defaultValue('all'),
