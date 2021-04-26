@@ -51,7 +51,7 @@ class MarketingController extends Controller
      * @access protected
      */
     protected $allowAnonymous = ['create-marketing', 'delete-marketing-by-id', 'enable-marketing', 'disable-marketing',
-        'update-marketing', 'get-all-marketing', 'pay-for-custom-marketing'];
+        'update-marketing', 'get-all-marketing', 'pay-for-custom-marketing', 'get-all-personal-marketing'];
 
     // Public Methods
     // =========================================================================
@@ -77,12 +77,14 @@ class MarketingController extends Controller
         $type = Craft::$app->request->getBodyParam('type');
         $enabled = Craft::$app->request->getBodyParam('enabled');
         $userGroup = Craft::$app->request->getBodyParam('userGroup');
+        $owner = Craft::$app->request->getBodyParam('owner');
         $pdf = $_FILES['pdf'];
         $jpg = $_FILES['jpg'];
         $html = $_FILES['html'];
         $previewImage = $_FILES['previewImage'];
         $query = [];
         $query = $this->addToQuery('vendor', $vendor, $query);
+        $query = $this->addToQuery('userId', $owner, $query);
         $query = $this->addToQuery('delivery_time', $delivery_time, $query);
         $query = $this->addToQuery('title', $title, $query);
         $query = $this->addToQuery('price', $price, $query);
@@ -149,12 +151,14 @@ class MarketingController extends Controller
         $type = Craft::$app->request->getBodyParam('type');
         $enabled = Craft::$app->request->getBodyParam('enabled') ?? 1;
         $userGroup = Craft::$app->request->getBodyParam('userGroup');
+        $owner = Craft::$app->request->getBodyParam('owner');
         $pdf = $_FILES['pdf'];
         $jpg = $_FILES['jpg'];
         $html = $_FILES['html'];
         $previewImage = $_FILES['previewImage'];
         $query = [];
         $query = $this->addToQuery('vendor', $vendor, $query);
+        $query = $this->addToQuery('userId', $owner, $query);
         $query = $this->addToQuery('delivery_time', $delivery_time, $query);
         $query = $this->addToQuery('title', $title, $query);
         $query = $this->addToQuery('price', $price, $query);
@@ -215,9 +219,33 @@ class MarketingController extends Controller
             array_push($groups, $currentUserGroup->handle);
         }
         if ($status == 'any'){
-            $marketing = (new Query())->select("*")->from('{{%print_marketing}}')->where(['userGroup' => $groups])->all();
+            $marketing = (new Query())->select("*")->from('{{%print_marketing}}')->where(['userGroup' => $groups, 'userId' => 'all'])->all();
         }elseif($status == 1){
-            $marketing = (new Query())->select("*")->from('{{%print_marketing}}')->where(['enabled' => 1, 'userGroup' => $groups])->all();
+            $marketing = (new Query())->select("*")->from('{{%print_marketing}}')->where(['enabled' => 1, 'userGroup' => $groups, 'userId' => 'all'])->all();
+        }else{
+            $marketing = [];
+        }
+        return \GuzzleHttp\json_encode($marketing);
+    }
+
+    public function actionGetAllPersonalMarketing($status = 'any')
+    {
+        $comingSoon = Craft::$app->plugins->getPlugin('print-plugin')->getSettings()->comingSoon;
+        if ($comingSoon){
+            $status = 'any';
+        }else{
+            $status = 1;
+        }
+        $currentUser = Craft::$app->user->getIdentity();
+        $currentUserGroups = Craft::$app->user->getIdentity()->getGroups();
+        $groups = ['all'];
+        foreach ($currentUserGroups as $currentUserGroup){
+            array_push($groups, $currentUserGroup->handle);
+        }
+        if ($status == 'any'){
+            $marketing = (new Query())->select("*")->from('{{%print_marketing}}')->where(['userGroup' => $groups, 'userId' => $currentUser->id])->all();
+        }elseif($status == 1){
+            $marketing = (new Query())->select("*")->from('{{%print_marketing}}')->where(['enabled' => 1, 'userGroup' => $groups, 'userId' => $currentUser->id])->all();
         }else{
             $marketing = [];
         }
@@ -237,32 +265,12 @@ class MarketingController extends Controller
         if (!$customer){
             return false;
         }
-        $firstName = Craft::$app->request->getParam('firstName');
-        $lastName = Craft::$app->request->getParam('lastName');
-        $email = Craft::$app->request->getParam('email');
-        $phone = Craft::$app->request->getParam('phone');
-        $state = Craft::$app->request->getParam('state');
-        $city = Craft::$app->request->getParam('city');
-        $zip = Craft::$app->request->getParam('zip');
-        $address1 = Craft::$app->request->getParam('address1');
-        $address2 = Craft::$app->request->getParam('address2');
-
         $customerId = $customer->reference;
         $fullPrice = $marketing['price'] * $count;
         $fullPrice = $fullPrice + $marketing['shipping_cost'];
         $fullPrice = $fullPrice * 100;
         $title = $marketing['title'];
         $html = "User with craftId $user->id and email $user->email, paid for Custom Marketing '$title' id=$marketingId count=$count";
-        $html = $html."<br>
-        First Name: $firstName<br>
-        Last Name: $lastName<br>
-        Email: $email<br>
-        Phone: $phone<br>
-        State: $state<br>
-        City: $city<br>
-        ZIP: $zip<br>
-        Address1: $address1<br>
-        Address2: $address2";
         $payment = $stripe->paymentIntents->create([
             'amount' => $fullPrice,
             'currency' => 'usd',
@@ -297,9 +305,11 @@ class MarketingController extends Controller
 
     public function addFilesToQuery($name, $files, $query)
     {
+        if (!$files['name']){
+            return $query;
+        }
         $total = count($files['name']);
         $arrayOfImages = [];
-// Loop through each file
         for( $i=0 ; $i < $total ; $i++ ) {
 
             $file_name = rand(0, 99999999) . $files['name'][$i];

@@ -58,7 +58,6 @@
                 </label>
                 <div class="select">
                     <select name="vendor">
-                        <option value="">Select Vendor</option>
                         {% for vendorEmail in vendorEmails.emails %}
                             <option value="{{ vendorEmail.email }}">{{ vendorEmail.email }}</option>
                         {% endfor %}
@@ -66,6 +65,20 @@
                 </div>
             </div>
         {% endif %}
+        {% set users = craft.users.all()%}
+        <div class="fieldset">
+            <label for="owner">
+                <h4>Select owner user</h4>
+            </label>
+            <div class="select">
+                <select name="owner">
+                    <option value="all">For All</option>
+                    {% for user in users %}
+                        <option value="{{ user.id }}">{{ user.email }} - {{ user.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
         <div class="fieldset">
             <label for="delivery_time">
                 <h4>Delivery Time</h4>
@@ -138,7 +151,7 @@
         <div class="fieldset">
             <label class="submit-btn --grey">
                 Upload Preview Image
-                <input style="display: none;" type="file" name="previewImage[]" multiple>
+                <input style="display: none;" type="file" name="previewImage" multiple>
             </label>
         </div>
 

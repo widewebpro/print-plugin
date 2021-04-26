@@ -30,7 +30,7 @@ use craft\db\Migration;
  * @package   SocialMediaPosts
  * @since     1.0.0
  */
-class m210423_123712_custom_marketing extends Migration
+class m210426_093042_custom_marketing extends Migration
 {
     // Public Properties
     // =========================================================================
@@ -121,8 +121,9 @@ class m210423_123712_custom_marketing extends Migration
                     'pdf' => $this->string(),
                     'jpg' => $this->string(),
                     'html' => $this->string(),
+                    'userId' => $this->string(),
 //                    'fileType' => $this->string()->defaultValue('pdf'),
-                    'previewImage' => $this->longText(),
+                    'previewImage' => $this->string(),
                     'dateCreated' => $this->dateTime()->notNull(),
                     'dateUpdated' => $this->dateTime()->notNull(),
                     'uid' => $this->uid(),

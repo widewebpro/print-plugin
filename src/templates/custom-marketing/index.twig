@@ -40,7 +40,7 @@
 
 {# The content of the CP Section#}
 {% set content %}
-    <h2>{{ "Lists Pdfs" }}</h2>
+    <h2>{{ "Lists Custom Marketing" }}</h2>
 
     <div class="btn-wrap --content-left">
         <a href="{{ url('print-plugin/marketing/create') }}" class="create-new-pdf-btn">Create</a>
@@ -56,6 +56,7 @@
         <tr>
             <th style="width:10%" scope="col" data-attribute="title" class="orderable">Title</th>
             <th style="width:10%" scope="col" data-attribute="title" class="orderable">Vendor</th>
+            <th style="width:10%" scope="col" data-attribute="title" class="orderable">Owner</th>
             <th style="width:10%" scope="col" data-attribute="title" class="orderable">Date Created</th>
             <th style="width:10%" scope="col" data-attribute="title" class="orderable">Delete</th>
             <th style="width:10%" scope="col" data-attribute="title" class="orderable">Status</th>
@@ -71,6 +72,9 @@
                 </td>
                 <td>
                     {{ marketing.vendor }}
+                </td>
+                <td>
+                    {{ marketing.userId }}
                 </td>
                 <td>
                     {{ marketing.dateCreated }}

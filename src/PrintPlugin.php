@@ -67,7 +67,7 @@ class PrintPlugin extends Plugin
      *
      * @var string
      */
-    public $schemaVersion = '1.0.6';
+    public $schemaVersion = '1.0.7';
 
     /**
      * Set to `true` if the plugin should have a settings view in the control panel.
