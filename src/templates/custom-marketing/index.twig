@@ -84,17 +84,17 @@
                 <td>
                     <a class="create-pdf"
                        href="/actions/print-plugin/marketing/delete-marketing-by-id?id={{ marketing.id }}"
-                    >Delete PDF</a>
+                    >Delete Marketing</a>
                 </td>
                 <td>
                     {% if marketing.enabled == 0 %}
                         <a class="create-pdf"
                            href="/actions/print-plugin/marketing/enable-marketing?id={{ marketing.id }}"
-                        >Enable PDF</a>
+                        >Enable Marketing</a>
                     {% elseif marketing.enabled == 1 %}
                         <a class="create-pdf"
                            href="/actions/print-plugin/marketing/disable-marketing?id={{ marketing.id }}"
-                        >Disable PDF</a>
+                        >Disable Marketing</a>
                     {% endif %}
                 </td>
 

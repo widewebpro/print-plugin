@@ -123,7 +123,7 @@ class m210426_093042_custom_marketing extends Migration
                     'html' => $this->string(),
                     'userId' => $this->string(),
 //                    'fileType' => $this->string()->defaultValue('pdf'),
-                    'previewImage' => $this->string(),
+                    'previewImage' => $this->longText(),
                     'dateCreated' => $this->dateTime()->notNull(),
                     'dateUpdated' => $this->dateTime()->notNull(),
                     'uid' => $this->uid(),
