@@ -51,7 +51,8 @@ class MarketingController extends Controller
      * @access protected
      */
     protected $allowAnonymous = ['create-marketing', 'delete-marketing-by-id', 'enable-marketing', 'disable-marketing',
-        'update-marketing', 'get-all-marketing', 'pay-for-custom-marketing', 'get-all-personal-marketing'];
+        'update-marketing', 'get-all-marketing', 'pay-for-custom-marketing', 'get-all-personal-marketing',
+        'make-personal-custom-marketing'];
 
     // Public Methods
     // =========================================================================
@@ -62,6 +63,81 @@ class MarketingController extends Controller
      *
      * @return mixed
      */
+    public function actionMakePersonalCustomMarketing()
+    {
+        $user = Craft::$app->user->getIdentity();
+        $contactId = $user->contactId;
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://rest.gohighlevel.com/v1/contacts/'.$contactId,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'Authorization: Bearer 992e43da-4ff3-45a1-9057-973895668662'
+            ),
+        ));
+
+        $response = @json_decode(curl_exec($curl));
+
+        curl_close($curl);
+        if ($response and isset($response->contact->tags) and !in_array('custom marketing', $response->contact->tags)){
+            $tags = $response->contact->tags;
+            $tags[] = 'custom marketing';
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://rest.gohighlevel.com/v1/contacts/'.$contactId,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'PUT',
+                CURLOPT_POSTFIELDS => json_encode([
+                    'tags' => $tags
+                ]),
+                CURLOPT_HTTPHEADER => array(
+                    'Content-Type: application/json',
+                    'Authorization: Bearer 992e43da-4ff3-45a1-9057-973895668662'
+                ),
+            ));
+
+            $response = curl_exec($curl);
+
+            curl_close($curl);
+            $emails = Craft::$app->globals->getSetByHandle('customMarketingNotifications');
+            if (!$emails){
+                return 'Global set "customMarketingNotifications" not exist';
+            }
+            $emails = $emails->emails;
+            foreach ($emails as $email){
+                $email = $email['email'];
+                Craft::$app
+                    ->getMailer()
+                    ->compose()
+                    ->setTo($email)
+                    ->setSubject($user->email . '- This user wants personalized "Custom Marketing"')
+                    ->setHtmlBody("This user wants personalized \"Custom Marketing\" 
+<br>Email: $user->email 
+<br>First Name: $user->firstName 
+<br>Last Name: $user->lastName
+<br>Phone: $user->contactPhoneNumber
+<br>Company: $user->companyName")
+                    ->send();
+            }
+            return $response;
+        }
+        return 'User already has this tag';
+    }
+
+
     public function actionUpdateMarketing()
     {
         $vendor = Craft::$app->request->getBodyParam('vendor');
