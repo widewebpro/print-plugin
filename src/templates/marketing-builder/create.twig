@@ -1,0 +1,310 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Print Plugin plugin for Craft CMS 3.x
+ *
+ * Print Plugin index.twig
+ *
+ * @author    WideWeb
+ * @copyright Copyright (c) 2020 WideWeb
+ * @link      WideWeb.pro
+ * @package   PrintPlugin
+ * @since     1.0.0
+ */
+#}
+
+{% extends "_layouts/cp" %}
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("wideweb\\printplugin\\assetbundles\\printplugin\\PrintPluginAsset") %}
+{% do view.registerAssetBundle("wideweb\\printplugin\\assetbundles\\indexcpsection\\IndexCPSectionAsset") %}
+
+{# Link for the ? icon at the bottom of the page #}
+{% set docsUrl = "https://github.com/wideweb/print-plugin/blob/master/README.md" %}
+
+{# The title of this CP section #}
+{% set title = "Print Plugin - Marketing Builder" %}
+
+{# The URL to this plugin's base CP section #}
+{% set pluginCpUrl = url('print-plugin') %}
+
+{# Get a URL to an image in our AssetBundle #}
+{% set iconUrl = view.getAssetManager().getPublishedUrl('@wideweb/printplugin/assetbundles/indexcpsection/dist', true) ~ '/img/Index-icon.svg' %}
+
+{# Content that should appear in the page header#}
+{% set extraPageHeaderHtml %}
+    <div class="buttons">
+        <a href="{{ pluginCpUrl }}" class="btn submit add icon">{{ "Click Me!"|t('print-plugin') }}</a>
+    </div>
+{% endset %}
+{#{% set tabs = {#}
+{#content:            { label: "Content"|t, url: url('print-plugin/create-pdf') },#}
+{#outputs:         { label: "Outputs"|t, url: url('print-plugin/outputs') },#}
+{#} %}#}
+{# The content of the CP Section#}
+{#{% set selectedTab = 'content' %}#}
+{% set content %}
+    {% set pluginSettings = craft.app.getPlugins().getPlugin('print-plugin').getSettings() %}
+    {% set selectedSubnavItem = 'marketing-builder' %}
+    <h2>{{ "Create new Marketing Builder" }}</h2>
+    <form action="/actions/print-plugin/marketing-builder/create-marketing-builder" method="POST" enctype="multipart/form-data">
+        {{ csrfInput() }}
+        {% if pluginSettings.choiceFormat|length > 1 %}
+            <div class="fieldset">
+                <label for="type">
+                    <h4>Select Format of Size</h4>
+                </label>
+                <div class="select">
+                    <select name="type">
+                        {% for typeF in pluginSettings.choiceFormat %}
+                            <option value="{{ typeF }}">{{ typeF|upper }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        {% else  %}
+            <input type="hidden" name="type" value="{{ pluginSettings.choiceFormat[0] }}" >
+        {% endif %}
+
+        {% if 'a' in pluginSettings.choiceFormat %}
+            <div class="fieldset">
+                <div class="select">
+                    <select name="size">
+                        <option value="a0">A0</option>
+                        <option value="a1">A1</option>
+                        <option value="a2">A2</option>
+                        <option value="a3">A3</option>
+                        <option value="a4">A4</option>
+                        <option value="a5">A5</option>
+                    </select>
+                </div>
+            </div>
+        {% endif %}
+        {% if 'cm'  in pluginSettings.choiceFormat or 'px' in pluginSettings.choiceFormat %}
+            <div class="fieldset">
+                <label for="heigth">
+                    <h4>Height</h4>
+                </label>
+                <input type="number" name="height" placeholder="Height">
+            </div>
+
+            <div class="fieldset">
+                <label for="width">
+                    <h4>Width</h4>
+                </label>
+                <input type="number" name="width" placeholder="Width">
+            </div>
+        {% endif %}
+        {% set vendorEmails = craft.app.globals.getSetByHandle('vendorEmails') %}
+        {% if vendorEmails %}
+            <div class="fieldset">
+                <label for="userGroup">
+                    <h4>Select Vendor</h4>
+                </label>
+                <div class="select">
+                    <select name="vendor">
+                        {% for vendorEmail in vendorEmails.emails %}
+                            <option value="{{ vendorEmail.email }}">{{ vendorEmail.email }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        {% endif %}
+        {#{% set users = craft.users.all()%}#}
+        {#<div class="fieldset">#}
+        {#<label for="owner">#}
+        {#<h4>Select owner user</h4>#}
+        {#</label>#}
+        {#<div class="select">#}
+        {#<select name="owner">#}
+        {#<option value="all">For All</option>#}
+        {#{% for user in users %}#}
+        {#<option value="{{ user.id }}">{{ user.email }} - {{ user.name }}</option>#}
+        {#{% endfor %}#}
+        {#</select>#}
+        {#</div>#}
+        {#</div>#}
+        <div class="fieldset">
+            <label for="delivery_time">
+                <h4>Delivery Time</h4>
+            </label>
+            <input type="text" name="delivery_time" placeholder="Delivery Time" required>
+        </div>
+        <div class="fieldset">
+            <label for="price">
+                <h4>Price per unit</h4>
+            </label>
+            <input type="number" name="price" placeholder="Price per unit" required>
+        </div>
+        <div class="fieldset">
+            <label for="title">
+                <h4>Title</h4>
+            </label>
+            <input type="text" name="title" placeholder="Title" required>
+        </div>
+        <div class="fieldset">
+            <label for="description">
+                <h4>Description</h4>
+            </label>
+            <textarea type="text" name="description" placeholder="Description" required> </textarea>
+        </div>
+        <div class="fieldset">
+            <label for="size">
+                <h4>Product Size</h4>
+            </label>
+            <input type="text" name="product_size" placeholder="Product Size" required>
+        </div>
+        <div class="fieldset">
+            <label for="specs">
+                <h4>Specs</h4>
+            </label>
+            <input type="text" name="specs" placeholder="Specs" required>
+        </div>
+        <div class="fieldset">
+            <label for="order_min">
+                <h4>Order Minimum</h4>
+            </label>
+            <input type="text" name="order_min" placeholder="Order Minimum" required>
+        </div>
+        <div class="fieldset">
+            <label for="shipping_cost">
+                <h4>Shipping cost</h4>
+            </label>
+            <input type="number" name="shipping_cost" placeholder="Shipping cost" required>
+        </div>
+        <div class="fieldset">
+            <label class="submit-btn --grey">
+                Upload Html
+                <input style="display: none;" type="file" name="html">
+            </label>
+        </div>
+
+        {#<div class="fieldset">#}
+        {#<label class="submit-btn --grey">#}
+        {#Upload Jpg#}
+        {#<input style="display: none;" type="file" name="jpg">#}
+        {#</label>#}
+        {#</div>#}
+
+        {#<div class="fieldset">#}
+        {#<label class="submit-btn --grey">#}
+        {#Upload Pdf#}
+        {#<input style="display: none;" type="file" name="pdf">#}
+        {#</label>#}
+        {#</div>#}
+
+        <div class="fieldset">
+            <label class="submit-btn --grey">
+                Upload Preview Image
+                <input style="display: none;" type="file" name="previewImage[]" multiple required>
+            </label>
+        </div>
+
+        <input class="submit-btn" type="submit" value="Create">
+    </form>
+
+    <style>
+        .--grey {
+            background-color: #8b96a2 !important;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+        }
+        .fieldset textarea {
+            min-width: 355px;
+            box-sizing: border-box;
+            resize: none;
+            margin-top: 12px;
+            min-height: 74px;
+            padding: 6px 9px;
+            border-radius: 3px;
+            border: 1px solid rgba(96, 125, 159, 0.25);
+            background-color: #fbfcfe;
+            box-shadow: inset 0 1px 4px -1px rgba(96, 125, 159, 0.25);
+            background-clip: padding-box;
+            font-size: 14px;
+            line-height: 20px;
+            color: #3f4d5a;
+            appearance: none;
+        }
+        .fieldset label h4 {
+            margin-bottom: 8px !important;
+            padding-left: 4px;
+            color: #3f4d5a;
+        }
+        .fieldset select {
+            padding: 7px 22px 7px 10px;
+            display: block;
+            position: relative;
+            border: none;
+            font-size: 14px;
+            line-height: 20px;
+            color: #3f4d5a;
+            background-color: rgba(96, 125, 159, 0.25);
+            appearance: none;
+            white-space: pre;
+            border-radius: 5px;
+            min-width: 356px;
+        }
+        .fieldset input {
+            padding: 6px 9px;
+            min-width: 356px;
+            border-radius: 3px;
+            border: 1px solid rgba(96, 125, 159, 0.25);
+            background-color: #fbfcfe;
+            box-shadow: inset 0 1px 4px -1px rgba(96, 125, 159, 0.25);
+            background-clip: padding-box;
+            font-size: 14px;
+            line-height: 20px;
+            color: #3f4d5a;
+            min-height: 3px;
+            box-sizing: border-box;
+            appearance: none;
+        }
+        .fieldset .select:after {
+            display: block;
+            content: '';
+            width: 5px;
+            height: 5px;
+            border: solid #7b8793;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+            position: absolute;
+            z-index: 1;
+            top: calc(50% - 5px);
+            right: 9px;
+            user-select: none;
+            pointer-events: none;
+        }
+        .fieldset select option {
+            line-height: 24px;
+        }
+        .fieldset select:focus,
+        .fieldset input:focus {
+            outline: none;
+            border-color: rgba(96, 125, 159, 0.8);
+        }
+        .fieldset {
+            margin-bottom: 12px;
+        }
+        .submit-btn {
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            padding: 7px 14px;
+            border: none;
+            text-align: center;
+            white-space: nowrap;
+            user-select: none;
+            cursor: pointer;
+            box-sizing: border-box;
+            appearance: none;
+            outline: none;
+            color: #fff;
+            font-size: inherit;
+            background-color: #e5422b;
+        }
+    </style>
+
+{% endset %}

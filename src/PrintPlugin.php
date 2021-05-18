@@ -11,6 +11,8 @@
 namespace wideweb\printplugin;
 
 use wideweb\printplugin\services\PrintPluginService as PrintPluginServiceService;
+use wideweb\printplugin\variables\MarketingBuilderVariable;
+use wideweb\printplugin\variables\MarketingCampaignVariable;
 use wideweb\printplugin\variables\MarketingVariable;
 use wideweb\printplugin\variables\PrintPluginVariable;
 use wideweb\printplugin\models\Settings;
@@ -67,7 +69,7 @@ class PrintPlugin extends Plugin
      *
      * @var string
      */
-    public $schemaVersion = '1.0.7';
+    public $schemaVersion = '1.0.9';
 
     /**
      * Set to `true` if the plugin should have a settings view in the control panel.
@@ -91,6 +93,8 @@ class PrintPlugin extends Plugin
             'fields' => ['label' => 'Fields Manager', 'url' => 'print-plugin/fields'],
             'static' => ['label' => 'Static Graphic', 'url' => 'print-plugin/static'],
             'marketing' => ['label' => 'Custom Marketing', 'url' => 'print-plugin/marketing'],
+            'marketing-builder' => ['label' => 'Marketing Builder', 'url' => 'print-plugin/marketing-builder'],
+            'campaign-builder' => ['label' => 'Campaign Builder', 'url' => 'print-plugin/campaign-builder'],
         ];
         return $item;
     }
@@ -143,6 +147,14 @@ class PrintPlugin extends Plugin
                 $event->rules['print-plugin/marketing'] = ['template' => 'print-plugin/custom-marketing/index.twig'];
                 $event->rules['print-plugin/marketing/create'] = ['template' => 'print-plugin/custom-marketing/create.twig'];
                 $event->rules['print-plugin/marketing/<widgetId:\d+>'] = ['template' => 'print-plugin/custom-marketing/edit.twig'];
+                //marketing builder
+                $event->rules['print-plugin/marketing-builder'] = ['template' => 'print-plugin/marketing-builder/index.twig'];
+                $event->rules['print-plugin/marketing-builder/create'] = ['template' => 'print-plugin/marketing-builder/create.twig'];
+                $event->rules['print-plugin/marketing-builder/<widgetId:\d+>'] = ['template' => 'print-plugin/marketing-builder/edit.twig'];
+                //campaign builder
+                $event->rules['print-plugin/campaign-builder'] = ['template' => 'print-plugin/campaign-builder/index.twig'];
+//                $event->rules['print-plugin/campaign-builder/create'] = ['template' => 'print-plugin/campaign-builder/create.twig'];
+//                $event->rules['print-plugin/campaign-builder/<widgetId:\d+>'] = ['template' => 'print-plugin/campaign-builder/edit.twig'];
             }
         );
 
@@ -156,6 +168,8 @@ class PrintPlugin extends Plugin
                 $variable->set('printPlugin', PrintPluginVariable::class);
                 $variable->set('printPluginStatic', StaticVariable::class);
                 $variable->set('printPluginMarketing', MarketingVariable::class);
+                $variable->set('printPluginMarketingBuilder', MarketingBuilderVariable::class);
+                $variable->set('printPluginCampaign', MarketingCampaignVariable::class);
             }
         );
 
