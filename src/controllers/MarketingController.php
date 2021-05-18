@@ -341,12 +341,31 @@ class MarketingController extends Controller
         if (!$customer){
             return false;
         }
+        $firstName = Craft::$app->request->getParam('firstName');
+        $lastName = Craft::$app->request->getParam('lastName');
+        $email = Craft::$app->request->getParam('email');
+        $phone = Craft::$app->request->getParam('phone');
+        $state = Craft::$app->request->getParam('state');
+        $city = Craft::$app->request->getParam('city');
+        $zip = Craft::$app->request->getParam('zip');
+        $address1 = Craft::$app->request->getParam('address1');
+        $address2 = Craft::$app->request->getParam('address2');
         $customerId = $customer->reference;
         $fullPrice = $marketing['price'] * $count;
         $fullPrice = $fullPrice + $marketing['shipping_cost'];
         $fullPrice = $fullPrice * 100;
         $title = $marketing['title'];
         $html = "User with craftId $user->id and email $user->email, paid for Custom Marketing '$title' id=$marketingId count=$count";
+        $html = $html."<br>
+        First Name: $firstName<br>
+        Last Name: $lastName<br>
+        Email: $email<br>
+        Phone: $phone<br>
+        State: $state<br>
+        City: $city<br>
+        ZIP: $zip<br>
+        Address1: $address1<br>
+        Address2: $address2";
         $payment = $stripe->paymentIntents->create([
             'amount' => $fullPrice,
             'currency' => 'usd',

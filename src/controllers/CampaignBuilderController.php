@@ -89,12 +89,27 @@ class CampaignBuilderController extends Controller
                 $fullPrice = $fullPrice * 100;
                 $title = $campaign['title'];
                 $titleLayout = $layout['title'];
+                $firstName = Craft::$app->request->getParam('firstName');
+                $lastName = Craft::$app->request->getParam('lastName');
+                $email = Craft::$app->request->getParam('email');
+                $phone = Craft::$app->request->getParam('phone');
+                $state = Craft::$app->request->getParam('state');
+                $city = Craft::$app->request->getParam('city');
+                $zip = Craft::$app->request->getParam('zip');
+                $address1 = Craft::$app->request->getParam('address1');
+                $address2 = Craft::$app->request->getParam('address2');
                 $html = "User with craftId $user->id and email 
-                $user->email, paid for Campaign  '$title' CampaignId=$campaignId with Layout '$titleLayout' LayoutId=$layoutId  count=$count <br>
-                First Name: $user->firstName<br>
-                Last Name: $user->lastName<br>
-                Email: $user->email<br>
-                ";
+                $user->email, paid for Campaign  '$title' CampaignId=$campaignId with Layout '$titleLayout' LayoutId=$layoutId  count=$count";
+                $html = $html."<br>
+                First Name: $firstName<br>
+                Last Name: $lastName<br>
+                Email: $email<br>
+                Phone: $phone<br>
+                State: $state<br>
+                City: $city<br>
+                ZIP: $zip<br>
+                Address1: $address1<br>
+                Address2: $address2";
                 $payment = $stripe->paymentIntents->create([
                     'amount' => $fullPrice,
                     'currency' => 'usd',
