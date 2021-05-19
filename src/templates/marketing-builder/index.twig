@@ -54,6 +54,7 @@
     <table id="pdfs-list" class="data">
         <thead>
         <tr>
+            <th style="width:10%" scope="col" data-attribute="title" class="orderable">Id</th>
             <th style="width:10%" scope="col" data-attribute="title" class="orderable">Title</th>
             <th style="width:10%" scope="col" data-attribute="title" class="orderable">Vendor</th>
             {#<th style="width:10%" scope="col" data-attribute="title" class="orderable">Owner</th>#}
@@ -65,6 +66,11 @@
         <tbody>
         {% for marketing in marketings %}
             <tr data-id="{{ marketing.id }}" data-name=" item.address ">
+                <td>
+                    <a href="{{url('print-plugin/marketing-builder/')}}/{{ marketing.id }}">
+                        {{ marketing.id }}
+                    </a>
+                </td>
                 <td>
                     <a href="{{url('print-plugin/marketing-builder/')}}/{{ marketing.id }}">
                         {{ marketing.title }}

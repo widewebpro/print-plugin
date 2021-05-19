@@ -54,6 +54,7 @@
     <table id="pdfs-list" class="data">
         <thead>
         <tr>
+            <th style="width:10%" scope="col" data-attribute="title" class="orderable">Id</th>
             <th style="width:10%" scope="col" data-attribute="title" class="orderable">Title</th>
             <th style="width:10%" scope="col" data-attribute="title" class="orderable">Owner Id</th>
             <th style="width:10%" scope="col" data-attribute="title" class="orderable">Generate PDF</th>
@@ -65,6 +66,11 @@
         <tbody>
         {% for campaign in campaigns %}
             <tr data-id="{{ campaign.id }}" data-name=" item.address ">
+                <td>
+                    {#<a href="{{url('print-plugin/campaign-builder/')}}/{{ campaign.id }}">#}
+                    {{ campaign.id }}
+                    {#</a>#}
+                </td>
                 <td>
                     {#<a href="{{url('print-plugin/campaign-builder/')}}/{{ campaign.id }}">#}
                         {{ campaign.title }}
