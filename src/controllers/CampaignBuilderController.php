@@ -208,9 +208,9 @@ class CampaignBuilderController extends Controller
         if (!$userId){
             return $this->asJson(['error' => '403']);
         }
+        $layoutId = Craft::$app->request->getParam('layoutId');
         $title = Craft::$app->request->getParam('title');
         $status = Craft::$app->request->getParam('status');
-
         $promotionFocus = Craft::$app->request->getParam('promotionFocus');
         $month = Craft::$app->request->getParam('month');
         $campaignHeadline = Craft::$app->request->getParam('campaignHeadline');
@@ -226,6 +226,7 @@ class CampaignBuilderController extends Controller
             $supportImages = json_encode($supportImages);
         }
         $query = [];
+        $query = $this->addToQuery('layoutId', $layoutId, $query);
         $query = $this->addToQuery('status', $status, $query);
         $query = $this->addToQuery('title', $title, $query);
         $query = $this->addToQuery('promotionFocus', $promotionFocus, $query);
