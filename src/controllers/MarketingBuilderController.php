@@ -333,9 +333,9 @@ class MarketingBuilderController extends Controller
             array_push($groups, $currentUserGroup->handle);
         }
         if ($status == 'any'){
-            $marketing = (new Query())->select("*")->from('{{%print_marketing_builder}}')->where(['userGroup' => $groups, 'userId' => 'all'])->all();
+            $marketing = (new Query())->select("*")->from('{{%print_marketing_builder}}')->where(['userGroup' => $groups])->all();
         }elseif($status == 1){
-            $marketing = (new Query())->select("*")->from('{{%print_marketing_builder}}')->where(['enabled' => 1, 'userGroup' => $groups, 'userId' => 'all'])->all();
+            $marketing = (new Query())->select("*")->from('{{%print_marketing_builder}}')->where(['enabled' => 1, 'userGroup' => $groups])->all();
         }else{
             $marketing = [];
         }
