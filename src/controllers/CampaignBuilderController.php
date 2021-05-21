@@ -253,8 +253,7 @@ class CampaignBuilderController extends Controller
         $result = (new Query())->select('*')
             ->from('{{%print_campaign_builder}}')
             ->where(['userId' => $userId->id])->one();
-        $this->asJson(['data' => $result, 'status' => 1]);
-        return $result;
+        return $this->asJson(['data' => $result, 'status' => 1]);
     }
 
     public function actionGetCampaignsByUserAnyStatus()
@@ -266,8 +265,7 @@ class CampaignBuilderController extends Controller
         $result = (new Query())->select('*')
             ->from('{{%print_campaign_builder}}')
             ->where(['userId' => $userId->id])->one();
-        $this->asJson(['data' => $result]);
-        return $result;
+        return $this->asJson(['data' => $result]);
     }
 
     public function actionDeleteCampaignById($id)
