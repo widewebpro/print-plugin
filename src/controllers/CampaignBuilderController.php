@@ -252,7 +252,7 @@ class CampaignBuilderController extends Controller
         }
         $result = (new Query())->select('*')
             ->from('{{%print_campaign_builder}}')
-            ->where(['userId' => $userId->id])->one();
+            ->where(['userId' => $userId->id])->all();
         return $this->asJson(['data' => $result, 'status' => 1]);
     }
 
@@ -264,7 +264,7 @@ class CampaignBuilderController extends Controller
         }
         $result = (new Query())->select('*')
             ->from('{{%print_campaign_builder}}')
-            ->where(['userId' => $userId->id])->one();
+            ->where(['userId' => $userId->id])->all();
         return $this->asJson(['data' => $result]);
     }
 
