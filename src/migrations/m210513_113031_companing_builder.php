@@ -120,7 +120,7 @@ class m210513_113031_companing_builder extends Migration
                     'supportImages' => $this->text(),
                     'primaryCoupon' => $this->text(),
                     'secondaryCoupon' => $this->text(),
-                    'status' => $this->integer(2),
+                    'status' => $this->integer(2)->notNull()->defaultValue(1),
                     'dateCreated' => $this->dateTime()->notNull(),
                     'dateUpdated' => $this->dateTime()->notNull(),
                     'uid' => $this->uid(),
