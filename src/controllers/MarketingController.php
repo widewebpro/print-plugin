@@ -256,7 +256,7 @@ class MarketingController extends Controller
 
     public function addToQuery($name, $variable, $query)
     {
-        if (!empty($variable)){
+        if (!empty($variable) or $variable == 0){
             $query[$name] = $variable;
         }
         return $query;
