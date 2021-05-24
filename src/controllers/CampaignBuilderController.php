@@ -170,7 +170,7 @@ class CampaignBuilderController extends Controller
         $supportImages = Craft::$app->request->getParam('supportImages');
         $primaryCoupon = Craft::$app->request->getParam('primaryCoupon');
         $secondaryCoupon = Craft::$app->request->getParam('secondaryCoupon');
-        $status = Craft::$app->request->getParam('status');
+        $status = Craft::$app->request->getParam('status') ?? 1;
 //        if ($supportImages){
 //            $supportImages = $supportImages;
 //        }
@@ -210,7 +210,7 @@ class CampaignBuilderController extends Controller
         }
         $layoutId = Craft::$app->request->getParam('layoutId');
         $title = Craft::$app->request->getParam('title');
-        $status = Craft::$app->request->getParam('status');
+        $status = Craft::$app->request->getParam('status') ?? 1;
         $promotionFocus = Craft::$app->request->getParam('promotionFocus');
         $month = Craft::$app->request->getParam('month');
         $campaignHeadline = Craft::$app->request->getParam('campaignHeadline');
