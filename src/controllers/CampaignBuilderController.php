@@ -52,7 +52,7 @@ class CampaignBuilderController extends Controller
      * @access protected
      */
     protected $allowAnonymous = ['create-campaign', 'get-html-campaign', 'get-campaigns-enable-by-user', 'update-campaign',
-        'get-campaign-by-id', 'delete-campaign-by-id', 'get-campaigns-by-user-any-status', 'pay-for-campaign'];
+        'get-campaign-by-id', 'delete-campaign-by-id', 'get-campaigns-by-user-any-status', 'pay-for-campaign', 'get-layout-by-id'];
 
     // Public Methods
     // =========================================================================
@@ -373,6 +373,15 @@ class CampaignBuilderController extends Controller
             ->where(['id' => $campaign['layoutId']])
             ->one();
         return $result;
+    }
+
+    public function actionGetLayoutById($id)
+    {
+        $result = (new Query())->select('*')
+            ->from('{{%print_marketing_builder}}')
+            ->where(['id' => $id])
+            ->one();
+        return $this->asJson($result);
     }
 
 }
