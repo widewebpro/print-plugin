@@ -190,15 +190,8 @@ class CampaignBuilderController extends Controller
         $query = $this->addToQuery('supportImages', $supportImages, $query);
         $query = $this->addToQuery('primaryCoupon', $primaryCoupon, $query);
         $query = $this->addToQuery('secondaryCoupon', $secondaryCoupon, $query);
-        if ($layoutId){
-            $layoutId = \GuzzleHttp\json_decode($layoutId);
-        }
-
-
-        foreach ($layoutId as $layout){
-            $query = $this->addToQuery('layoutId', $layout, $query);
-            Craft::$app->db->createCommand()->insert('{{%print_campaign_builder}}', $query)->execute();
-        }
+        $query = $this->addToQuery('layoutId', $layoutId, $query);
+        Craft::$app->db->createCommand()->insert('{{%print_campaign_builder}}', $query)->execute();
         return true;
     }
 
@@ -317,7 +310,7 @@ class CampaignBuilderController extends Controller
         return $query;
     }
 
-    public function actionGetHtmlCampaign($id)
+    public function actionGetHtmlCampaign($id, $layout)
     {
         $campaign = new MarketingCampaignVariable();
         $campaign = $campaign->getMarketingById($id);
@@ -329,8 +322,6 @@ class CampaignBuilderController extends Controller
         $supportImagesNew = [];
         if ($supportImages){
             $supportImages = \GuzzleHttp\json_decode($supportImages);
-//            var_dump($supportImages);
-//            die;
             foreach ($supportImages as $supportImage){
                 $supportImagesNew[] = Craft::$app->assets->getAssetById($supportImage)->getUrl();
             }
@@ -348,7 +339,7 @@ class CampaignBuilderController extends Controller
             'expires' => $campaign['expires'],
             'primaryCoupon' => $campaign['primaryCoupon'],
         ];
-        $layout = $this->getLayoutByCampaign($campaign);
+        $layout = $this->actionGetLayoutById($layout);
         if ($layout){
             $file = file_get_contents($layout['html']);
             $file_array = explode('/',$layout['html']);
@@ -362,8 +353,8 @@ class CampaignBuilderController extends Controller
             if ($template){
                 return json_encode(['html' => $template, 'settings' => ['format' => $layout['type'], 'size' => $layout['settings'] ]]);
             }
-
         }
+        return false;
     }
 
     public function getLayoutByCampaign($campaign)
