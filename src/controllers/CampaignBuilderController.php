@@ -215,9 +215,9 @@ class CampaignBuilderController extends Controller
         $supportImages = Craft::$app->request->getParam('supportImages');
         $primaryCoupon = Craft::$app->request->getParam('primaryCoupon');
         $secondaryCoupon = Craft::$app->request->getParam('secondaryCoupon');
-        if ($supportImages){
-            $supportImages = json_encode($supportImages);
-        }
+//        if ($supportImages){
+//            $supportImages = json_encode($supportImages);
+//        }
         $query = [];
         $query = $this->addToQuery('layoutId', $layoutId, $query);
         $query = $this->addToQuery('status', $status, $query);
