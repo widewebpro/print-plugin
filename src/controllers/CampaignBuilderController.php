@@ -339,7 +339,7 @@ class CampaignBuilderController extends Controller
             'expires' => $campaign['expires'],
             'primaryCoupon' => $campaign['primaryCoupon'],
         ];
-        $layout = $this->actionGetLayoutById($layout);
+        $layout = $this->getLayoutById($layout);
         if ($layout){
             $file = file_get_contents($layout['html']);
             $file_array = explode('/',$layout['html']);
@@ -373,6 +373,15 @@ class CampaignBuilderController extends Controller
             ->where(['id' => $id])
             ->one();
         return $this->asJson($result);
+    }
+
+    public function getLayoutById($id)
+    {
+        $result = (new Query())->select('*')
+            ->from('{{%print_marketing_builder}}')
+            ->where(['id' => $id])
+            ->one();
+        return $result;
     }
 
 }
