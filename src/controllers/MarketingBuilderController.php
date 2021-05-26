@@ -174,6 +174,7 @@ class MarketingBuilderController extends Controller
 //        $pdf = $_FILES['pdf'];
 //        $jpg = $_FILES['jpg'];
         $html = $_FILES['html'];
+        $backHtml = $_FILES['backHtml'];
         $previewImage = $_FILES['previewImage'];
         $query = [];
         $query = $this->addToQuery('type', $typeOfSize, $query);
@@ -194,6 +195,7 @@ class MarketingBuilderController extends Controller
 //        $query = $this->addFileToQuery('pdf', $pdf, $query);
 //        $query = $this->addFileToQuery('jpg', $jpg, $query);
         $query = $this->addFileToQuery('html', $html, $query);
+        $query = $this->addFileToQuery('backHtml', $backHtml, $query);
         $query = $this->addFilesToQuery('previewImage', $previewImage, $query);
         Craft::$app->db->createCommand()->update('{{%print_marketing_builder}}', $query, ['id' => $id])->execute();
         return Craft::$app->getResponse()->redirect(UrlHelper::cpUrl('/' . Craft::$app->config->general->cpTrigger .'/print-plugin/marketing-builder/' . $id));
@@ -240,16 +242,16 @@ class MarketingBuilderController extends Controller
         $size = Craft::$app->request->getBodyParam('size');
         if  ($typeOfSize and $typeOfSize == 'a' and $size){
             $settings = json_encode([
-                    'height' => null,
-                    'width' => null,
-                    'format' => $size
-                ]);
+                'height' => null,
+                'width' => null,
+                'format' => $size
+            ]);
         }else{
             $settings = json_encode([
-                    'height' => $height,
-                    'width' => $width,
-                    'format' => null
-                ]);
+                'height' => $height,
+                'width' => $width,
+                'format' => null
+            ]);
         }
         $vendor = Craft::$app->request->getBodyParam('vendor');
         $delivery_time = Craft::$app->request->getBodyParam('delivery_time');
@@ -267,6 +269,7 @@ class MarketingBuilderController extends Controller
 //        $pdf = $_FILES['pdf'];
 //        $jpg = $_FILES['jpg'];
         $html = $_FILES['html'];
+        $backHtml = $_FILES['backHtml'];
         $previewImage = $_FILES['previewImage'];
         $query = [];
         $query = $this->addToQuery('vendor', $vendor, $query);
@@ -287,6 +290,7 @@ class MarketingBuilderController extends Controller
 //        $query = $this->addFileToQuery('pdf', $pdf, $query);
 //        $query = $this->addFileToQuery('jpg', $jpg, $query);
         $query = $this->addFileToQuery('html', $html, $query);
+        $query = $this->addFileToQuery('backHtml', $backHtml, $query);
         $query = $this->addFilesToQuery('previewImage', $previewImage, $query);
         Craft::$app->db->createCommand()->insert('{{%print_marketing_builder}}', $query)->execute();
         return Craft::$app->getResponse()->redirect(UrlHelper::cpUrl('/' . Craft::$app->config->general->cpTrigger .'/print-plugin/marketing-builder/'));

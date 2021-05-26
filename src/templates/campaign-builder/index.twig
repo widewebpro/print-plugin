@@ -55,6 +55,7 @@
         <thead>
         <tr>
             <th style="width:10%" scope="col" data-attribute="title" class="orderable">Id</th>
+            <th style="width:10%" scope="col" data-attribute="title" class="orderable">Choice Layout Id</th>
             <th style="width:10%" scope="col" data-attribute="title" class="orderable">Title</th>
             <th style="width:10%" scope="col" data-attribute="title" class="orderable">Owner Id</th>
             <th style="width:10%" scope="col" data-attribute="title" class="orderable">Generate PDF</th>
@@ -72,8 +73,15 @@
                     {#</a>#}
                 </td>
                 <td>
+                    <select name="layout">
+                        {% for lay in campaign.layoutId|json_decode %}
+                            <option value="{{ lay }}">{{ lay }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>
                     {#<a href="{{url('print-plugin/campaign-builder/')}}/{{ campaign.id }}">#}
-                        {{ campaign.title }}
+                    {{ campaign.title }}
                     {#</a>#}
                 </td>
                 <td>

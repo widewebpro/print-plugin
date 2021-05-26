@@ -179,7 +179,13 @@
         <div class="fieldset">
             <label class="submit-btn --grey">
                 Upload Html
-                <input style="display: none;" type="file" name="html">
+                <input style="display: none;" type="file" name="html" accept=".html,.twig">
+            </label>
+        </div>
+        <div class="fieldset">
+            <label class="submit-btn --grey">
+                Upload Back Html
+                <input style="display: none;" type="file" name="backHtml" accept=".html,.twig">
             </label>
         </div>
 
@@ -200,7 +206,7 @@
         <div class="fieldset">
             <label class="submit-btn --grey">
                 Upload Preview Image
-                <input style="display: none;" type="file" name="previewImage[]" multiple>
+                <input style="display: none;" type="file" name="previewImage[]" accept=".jpg, .jpeg, .png" multiple>
             </label>
         </div>
 

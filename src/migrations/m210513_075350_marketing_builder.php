@@ -122,6 +122,7 @@ class m210513_075350_marketing_builder extends Migration
 //                    'pdf' => $this->string(),
 //                    'jpg' => $this->string(),
                     'html' => $this->string(),
+                    'backHtml' => $this->string(),
 //                    'userId' => $this->string(),
 //                    'fileType' => $this->string()->defaultValue('pdf'),
                     'previewImage' => $this->longText(),

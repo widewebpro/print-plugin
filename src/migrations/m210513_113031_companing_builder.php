@@ -107,7 +107,7 @@ class m210513_113031_companing_builder extends Migration
                 [
                     'id' => $this->primaryKey(),
                     'userId' => $this->string(11)->notNull(),
-                    'layoutId' => $this->string(11)->notNull(),
+                    'layoutId' => $this->longText()->notNull(),
                     'title' => $this->string(),
                     'promotionFocus' => $this->string(),
                     'month' => $this->string(),
