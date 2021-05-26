@@ -70,7 +70,8 @@ class CampaignBuilderController extends Controller
         $campaign = $this->actionGetCampaignById($id);
 
         if ($campaign){
-            $layout = $this->getLayoutByCampaign($campaign);
+            $layoutId = Craft::$app->request->getParam('layoutId');
+            $layout = $this->getLayoutById($layoutId);
             if ($layout){
                 $secretKey = Plugin::getInstance()->gateways->getGatewayById(2)->settings['apiKey'];
                 $stripe = new \Stripe\StripeClient(
@@ -81,7 +82,7 @@ class CampaignBuilderController extends Controller
                 if (!$customer){
                     return false;
                 }
-//                $layoutId = $layout['id'];
+                $layoutId = $layout['id'];
                 $campaignId = $campaign['id'];
                 $customerId = $customer->reference;
                 $fullPrice = $layout['price'] * $count;
@@ -89,7 +90,6 @@ class CampaignBuilderController extends Controller
                 $fullPrice = $fullPrice * 100;
                 $title = $campaign['title'];
                 $titleLayout = $layout['title'];
-                $layoutId = Craft::$app->request->getParam('layoutId');
                 $firstName = Craft::$app->request->getParam('firstName');
                 $lastName = Craft::$app->request->getParam('lastName');
                 $email = Craft::$app->request->getParam('email');
