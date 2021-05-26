@@ -81,7 +81,7 @@ class CampaignBuilderController extends Controller
                 if (!$customer){
                     return false;
                 }
-                $layoutId = $layout['id'];
+//                $layoutId = $layout['id'];
                 $campaignId = $campaign['id'];
                 $customerId = $customer->reference;
                 $fullPrice = $layout['price'] * $count;
@@ -89,6 +89,7 @@ class CampaignBuilderController extends Controller
                 $fullPrice = $fullPrice * 100;
                 $title = $campaign['title'];
                 $titleLayout = $layout['title'];
+                $layoutId = Craft::$app->request->getParam('layoutId');
                 $firstName = Craft::$app->request->getParam('firstName');
                 $lastName = Craft::$app->request->getParam('lastName');
                 $email = Craft::$app->request->getParam('email');
