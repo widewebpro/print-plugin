@@ -352,7 +352,10 @@ class CampaignBuilderController extends Controller
             $template = $template->render($outputs);
             unlink(CRAFT_BASE_PATH.'/web/img/files/'.$file_name);
             if ($template){
-                return json_encode(['html' => $template, 'settings' => ['format' => $layout['type'], 'size' => $layout['settings'] ]]);
+                $result = \GuzzleHttp\json_encode(['html' => htmlspecialchars_decode($template),
+                    'settings' => ['format' => $layout['type'], 'size' => $layout['settings'] ]],
+                    JSON_UNESCAPED_SLASHES);
+                return $result;
             }
         }
         return false;
