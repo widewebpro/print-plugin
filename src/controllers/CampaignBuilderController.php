@@ -317,6 +317,17 @@ class CampaignBuilderController extends Controller
         $campaign = $campaign->getMarketingById($id);
         $heroImage = $campaign['heroImage'];
         $supportImages = $campaign['supportImages'];
+        $userId = $campaign['userId'];
+        $logo = '';
+        if  ($userId){
+            $user = Craft::$app->users->getUserById($userId);
+            if ($user){
+                $logoAsset = $user->siteLogo->one();
+                if ($logoAsset){
+                    $logo = $logoAsset->getUrl();
+                }
+            }
+        }
         if ($heroImage){
             $heroImage = Craft::$app->assets->getAssetById($heroImage)->getUrl();
         }
@@ -339,6 +350,7 @@ class CampaignBuilderController extends Controller
             'blurb' => $campaign['blurb'],
             'expires' => $campaign['expires'],
             'primaryCoupon' => $campaign['primaryCoupon'],
+            'logo' => $logo
         ];
         $layout = $this->getLayoutById($layout);
         if ($layout){
