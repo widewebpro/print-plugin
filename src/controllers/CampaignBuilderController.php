@@ -100,7 +100,7 @@ class CampaignBuilderController extends Controller
                 $address1 = Craft::$app->request->getParam('address1');
                 $address2 = Craft::$app->request->getParam('address2');
                 $html = "User with craftId $user->id and email 
-                $user->email, paid for Campaign  '$title' CampaignId=$campaignId with Layout '$titleLayout' LayoutId=$layoutId  count=$count";
+                $user->email, paid $fullPrice in the Campaign  '$title' for product '$titleLayout' (quantity: $count)";
                 $html = $html."<br>
                 First Name: $firstName<br>
                 Last Name: $lastName<br>
@@ -110,7 +110,11 @@ class CampaignBuilderController extends Controller
                 City: $city<br>
                 ZIP: $zip<br>
                 Address1: $address1<br>
-                Address2: $address2";
+                Address2: $address2 <br>
+                CompanyId:  $campaignId<br>
+                ProductId:  $layoutId<br>
+                Product name:  $titleLayout<br>
+                ";
                 $payment = $stripe->paymentIntents->create([
                     'amount' => $fullPrice,
                     'currency' => 'usd',
