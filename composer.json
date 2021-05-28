@@ -2,7 +2,7 @@
     "name": "wideweb/print-plugin",
     "description": "Print Plugin",
     "type": "craft-plugin",
-    "version": "1.3.9",
+    "version": "1.4.0",
     "keywords": [
         "craft",
         "cms",

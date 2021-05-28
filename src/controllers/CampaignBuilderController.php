@@ -351,8 +351,21 @@ class CampaignBuilderController extends Controller
             $template = $twig->load($file_name);
             $template = $template->render($outputs);
             unlink(CRAFT_BASE_PATH.'/web/img/files/'.$file_name);
+            $templateBack = '';
+            if ($layout['backHtml']){
+                $file = file_get_contents($layout['backHtml']);
+                $file_array = explode('/',$layout['backHtml']);
+                $file_name = end($file_array);
+                file_put_contents(CRAFT_BASE_PATH.'/web/img/files/'.$file_name, $file);
+                $loader = new \Twig\Loader\FilesystemLoader(CRAFT_BASE_PATH.'/web/img/files/');
+                $twig = new \Twig\Environment($loader);
+                $templateBack = $twig->load($file_name);
+                $templateBack = $templateBack->render($outputs);
+                unlink(CRAFT_BASE_PATH.'/web/img/files/'.$file_name);
+            }
             if ($template){
                 $result = \GuzzleHttp\json_encode(['html' => htmlspecialchars_decode($template),
+                    'backHtml' => htmlspecialchars_decode($templateBack),
                     'settings' => ['format' => $layout['type'], 'size' => $layout['settings'] ]],
                     JSON_UNESCAPED_SLASHES);
                 return $result;
