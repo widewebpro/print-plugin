@@ -2,8 +2,8 @@
  * @project        PrintPlugin
  * @name           vendors~PrintPlugin.js
  * @author         
- * @build          Thu, Jan 28, 2021 11:48 AM ET
- * @release        b043dacf61690bad856e54f37f85722c57433030 [develop]
+ * @build          Mon, May 31, 2021 1:44 PM ET
+ * @release        2503358f081182dd599d9675dc7fd4f36505bc77 [master]
  * @copyright      Copyright (c) 2021 WideWeb
  *
  */
