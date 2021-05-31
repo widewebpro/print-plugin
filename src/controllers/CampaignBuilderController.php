@@ -86,8 +86,8 @@ class CampaignBuilderController extends Controller
                 $campaignId = $campaign['id'];
                 $customerId = $customer->reference;
                 $fullPrice = $layout['price'] * $count;
-                $fullPrice = $fullPrice + $layout['shipping_cost'];
-                $fullPrice = $fullPrice * 100;
+                $fullPriceForEmail = $fullPrice + $layout['shipping_cost'];
+                $fullPrice = $fullPriceForEmail * 100;
                 $title = $campaign['title'];
                 $titleLayout = $layout['title'];
                 $firstName = Craft::$app->request->getParam('firstName');
@@ -100,7 +100,7 @@ class CampaignBuilderController extends Controller
                 $address1 = Craft::$app->request->getParam('address1');
                 $address2 = Craft::$app->request->getParam('address2');
                 $html = "User with craftId $user->id and email 
-                $user->email, paid $fullPrice in the Campaign  '$title' for product '$titleLayout' (quantity: $count)";
+                $user->email, paid $fullPriceForEmail$ in the Campaign  '$title' for product '$titleLayout' (quantity: $count)";
                 $html = $html."<br>
                 First Name: $firstName<br>
                 Last Name: $lastName<br>
