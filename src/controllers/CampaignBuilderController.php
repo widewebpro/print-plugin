@@ -130,10 +130,11 @@ class CampaignBuilderController extends Controller
                 if ($stripeResponce->status == 'succeeded' and $layout['vendor']) {
                     $this->sendEmail($html, $user->email, $layout['vendor']);
                     return true;
-                }elseif ($stripeResponce->status){
+                }elseif ($stripeResponce->status == 'succeeded'){
                     return true;
+                }elseif ($stripeResponce->last_payment_error){
+                    return $this->asJson(['error' => $stripeResponce->last_payment_error->message]);
                 }
-                return $this->asJson(['error' => 'payment filed']);
             }else{
                 return $this->asJson(['error' => '404 - layout not found']);
             }
