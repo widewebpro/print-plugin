@@ -176,12 +176,18 @@ class CampaignBuilderController extends Controller
         $supportImages = Craft::$app->request->getParam('supportImages');
         $primaryCoupon = Craft::$app->request->getParam('primaryCoupon');
         $secondaryCoupon = Craft::$app->request->getParam('secondaryCoupon');
+        $site = Craft::$app->request->getParam('site');
+        $phone = Craft::$app->request->getParam('phone');
+        $address = Craft::$app->request->getParam('address');
         $status = Craft::$app->request->getParam('status') ?? 1;
 //        if ($supportImages){
 //            $supportImages = $supportImages;
 //        }
         $query = [];
         $query = $this->addToQuery('userId', $userId, $query);
+        $query = $this->addToQuery('site', $site, $query);
+        $query = $this->addToQuery('phone', $phone, $query);
+        $query = $this->addToQuery('address', $address, $query);
         $query = $this->addToQuery('status', $status, $query);
         $query = $this->addToQuery('layoutId', $layoutId, $query);
         $query = $this->addToQuery('title', $title, $query);
@@ -221,11 +227,17 @@ class CampaignBuilderController extends Controller
         $supportImages = Craft::$app->request->getParam('supportImages');
         $primaryCoupon = Craft::$app->request->getParam('primaryCoupon');
         $secondaryCoupon = Craft::$app->request->getParam('secondaryCoupon');
+        $site = Craft::$app->request->getParam('site');
+        $phone = Craft::$app->request->getParam('phone');
+        $address = Craft::$app->request->getParam('address');
 //        if ($supportImages){
 //            $supportImages = json_encode($supportImages);
 //        }
         $query = [];
         $query = $this->addToQuery('layoutId', $layoutId, $query);
+        $query = $this->addToQuery('site', $site, $query);
+        $query = $this->addToQuery('phone', $phone, $query);
+        $query = $this->addToQuery('address', $address, $query);
         $query = $this->addToQuery('status', $status, $query);
         $query = $this->addToQuery('title', $title, $query);
         $query = $this->addToQuery('promotionFocus', $promotionFocus, $query);
