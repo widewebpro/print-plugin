@@ -30,7 +30,7 @@ use craft\db\Migration;
  * @package   SocialMediaPosts
  * @since     1.0.0
  */
-class m210513_113031_companing_builder extends Migration
+class m210513_113032_companing_builder extends Migration
 {
     // Public Properties
     // =========================================================================
@@ -120,6 +120,9 @@ class m210513_113031_companing_builder extends Migration
                     'supportImages' => $this->text(),
                     'primaryCoupon' => $this->text(),
                     'secondaryCoupon' => $this->text(),
+                    'site' => $this->text(),
+                    'phone' => $this->text(),
+                    'address' => $this->text(),
                     'status' => $this->integer(2)->notNull()->defaultValue(1),
                     'dateCreated' => $this->dateTime()->notNull(),
                     'dateUpdated' => $this->dateTime()->notNull(),

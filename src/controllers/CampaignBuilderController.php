@@ -355,6 +355,7 @@ class CampaignBuilderController extends Controller
             'blurb' => $campaign['blurb'],
             'expires' => $campaign['expires'],
             'primaryCoupon' => $campaign['primaryCoupon'],
+            'secondaryCoupon' => $campaign['secondaryCoupon'],
             'logo' => $logo
         ];
         $layout = $this->getLayoutById($layout);
