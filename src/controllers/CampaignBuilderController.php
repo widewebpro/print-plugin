@@ -336,12 +336,17 @@ class CampaignBuilderController extends Controller
         $supportImages = $campaign['supportImages'];
         $userId = $campaign['userId'];
         $logo = '';
+        $whiteLogo = '';
         if  ($userId){
             $user = Craft::$app->users->getUserById($userId);
             if ($user){
                 $logoAsset = $user->siteLogo->one();
                 if ($logoAsset){
                     $logo = $logoAsset->getUrl();
+                }
+                $whiteLogoAsset = $user->whiteLogo->one();
+                if ($whiteLogoAsset){
+                    $whiteLogo = $whiteLogoAsset->getUrl();
                 }
             }
         }
@@ -371,7 +376,8 @@ class CampaignBuilderController extends Controller
             'phone' => $campaign['phone'],
             'site' => $campaign['site'],
             'address' => $campaign['address'],
-            'logo' => $logo
+            'logo' => $logo,
+            'whiteLogo' => $whiteLogo,
         ];
         $layout = $this->getLayoutById($layout);
         if ($layout){
