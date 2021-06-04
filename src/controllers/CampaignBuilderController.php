@@ -337,6 +337,12 @@ class CampaignBuilderController extends Controller
         $userId = $campaign['userId'];
         $logo = '';
         $whiteLogo = '';
+        $colorPicker = '';
+        $headline = '';
+        $supportText = '';
+        $secondaryColor = '';
+        $storeHeader = '';
+        $clubPromoSelectValue = '';
         if  ($userId){
             $user = Craft::$app->users->getUserById($userId);
             if ($user){
@@ -348,6 +354,15 @@ class CampaignBuilderController extends Controller
                 if ($whiteLogoAsset){
                     $whiteLogo = $whiteLogoAsset->getUrl();
                 }
+                $clubPromoSelectValueAsset = $user->clubPromoSelectValue->one();
+                if ($clubPromoSelectValueAsset){
+                    $clubPromoSelectValue = $clubPromoSelectValueAsset->getUrl();
+                }
+                $colorPicker = $user->colorPicker;
+                $headline = $user->headline;
+                $supportText = $user->supportText;
+                $secondaryColor = $user->secondaryColor;
+                $storeHeader = $user->storeHeader;
             }
         }
         if ($heroImage){
@@ -378,6 +393,12 @@ class CampaignBuilderController extends Controller
             'address' => $campaign['address'],
             'logo' => $logo,
             'whiteLogo' => $whiteLogo,
+            'clubPromoSelectValue' => $clubPromoSelectValue,
+            'storeHeader' => $storeHeader,
+            'secondaryColor' => $secondaryColor,
+            'supportText' => $supportText,
+            'headline' => $headline,
+            'colorPicker' => $colorPicker,
         ];
         $layout = $this->getLayoutById($layout);
         if ($layout){
