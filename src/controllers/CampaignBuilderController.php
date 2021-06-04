@@ -362,7 +362,10 @@ class CampaignBuilderController extends Controller
                 $headline = $user->headline;
                 $supportText = $user->supportText;
                 $secondaryColor = $user->secondaryColor;
-                $storeHeader = $user->storeHeader;
+                $storeHeaderAsset = $user->storeHeader->one();
+                if ($storeHeaderAsset){
+                    $storeHeader = $storeHeaderAsset->getUrl();
+                }
             }
         }
         if ($heroImage){
