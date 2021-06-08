@@ -30,7 +30,7 @@ use craft\db\Migration;
  * @package   SocialMediaPosts
  * @since     1.0.0
  */
-class m210513_075350_marketing_builder extends Migration
+class m210513_075351_marketing_builder extends Migration
 {
     // Public Properties
     // =========================================================================
