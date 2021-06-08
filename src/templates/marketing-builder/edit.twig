@@ -138,7 +138,7 @@
             <label for="price">
                 <h4>Price per unit</h4>
             </label>
-            <input type="number" name="price" placeholder="Price per unit" value="{{ marketing.price }}" required>
+            <input type="number" step="0.01" name="price" placeholder="Price per unit" value="{{ marketing.price }}" required>
         </div>
         <div class="fieldset">
             <label for="title">
@@ -174,7 +174,7 @@
             <label for="shipping_cost">
                 <h4>Shipping cost</h4>
             </label>
-            <input type="number" name="shipping_cost" placeholder="Shipping cost" value="{{ marketing.shipping_cost }}" required>
+            <input type="number" step="0.01" name="shipping_cost" placeholder="Shipping cost" value="{{ marketing.shipping_cost }}" required>
         </div>
         <div class="fieldset">
             <label class="submit-btn --grey">
