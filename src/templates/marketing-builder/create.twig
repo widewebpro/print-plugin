@@ -128,13 +128,20 @@
             <label for="delivery_time">
                 <h4>Delivery Time</h4>
             </label>
-            <input type="text" name="delivery_time" placeholder="Delivery Time" required>
+            <div class="select">
+                <select name="delivery_time" required>
+                        <option value="1-3 Days">1-3 Days</option>
+                        <option value="3-5 Days">3-5 Days</option>
+                        <option value="5-7 Days">5-7 Days</option>
+                        <option value="8-10 Days">8-10 Days</option>
+                </select>
+            </div>
         </div>
         <div class="fieldset">
             <label for="price">
                 <h4>Price per unit</h4>
             </label>
-            <input type="number" step="0.01" name="price" placeholder="Price per unit" required>
+            <input type="number" step="0.001" name="price" placeholder="Price per unit" required>
         </div>
         <div class="fieldset">
             <label for="title">

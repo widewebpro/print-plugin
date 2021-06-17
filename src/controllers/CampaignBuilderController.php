@@ -179,6 +179,8 @@ class CampaignBuilderController extends Controller
         $site = Craft::$app->request->getParam('site');
         $phone = Craft::$app->request->getParam('phone');
         $address = Craft::$app->request->getParam('address');
+        $aptSuite = Craft::$app->request->getParam('aptSuite');
+        $hoursOther = Craft::$app->request->getParam('hoursOther');
         $status = Craft::$app->request->getParam('status') ?? 1;
 //        if ($supportImages){
 //            $supportImages = $supportImages;
@@ -197,6 +199,8 @@ class CampaignBuilderController extends Controller
         $query = $this->addToQuery('heroImage', $heroImage, $query);
         $query = $this->addToQuery('promoDiscount', $promoDiscount, $query);
         $query = $this->addToQuery('promoOffer', $promoOffer, $query);
+        $query = $this->addToQuery('aptSuite', $aptSuite, $query);
+        $query = $this->addToQuery('hoursOther', $hoursOther, $query);
         $query = $this->addToQuery('blurb', $blurb, $query);
         $query = $this->addToQuery('expires', $expires, $query);
         $query = $this->addToQuery('supportImages', $supportImages, $query);
@@ -230,6 +234,8 @@ class CampaignBuilderController extends Controller
         $site = Craft::$app->request->getParam('site');
         $phone = Craft::$app->request->getParam('phone');
         $address = Craft::$app->request->getParam('address');
+        $aptSuite = Craft::$app->request->getParam('aptSuite');
+        $hoursOther = Craft::$app->request->getParam('hoursOther');
 //        if ($supportImages){
 //            $supportImages = json_encode($supportImages);
 //        }
@@ -246,6 +252,8 @@ class CampaignBuilderController extends Controller
         $query = $this->addToQuery('heroImage', $heroImage, $query);
         $query = $this->addToQuery('promoDiscount', $promoDiscount, $query);
         $query = $this->addToQuery('promoOffer', $promoOffer, $query);
+        $query = $this->addToQuery('aptSuite', $aptSuite, $query);
+        $query = $this->addToQuery('hoursOther', $hoursOther, $query);
         $query = $this->addToQuery('blurb', $blurb, $query);
         $query = $this->addToQuery('expires', $expires, $query);
         $query = $this->addToQuery('supportImages', $supportImages, $query);
@@ -394,6 +402,8 @@ class CampaignBuilderController extends Controller
             'phone' => $campaign['phone'],
             'site' => $campaign['site'],
             'address' => $campaign['address'],
+            'aptSuite' => $campaign['aptSuite'],
+            'hoursOther' => $campaign['hoursOther'],
             'logo' => $logo,
             'whiteLogo' => $whiteLogo,
             'clubPromoSelectValue' => $clubPromoSelectValue,

@@ -131,6 +131,14 @@
             <label for="delivery_time">
                 <h4>Delivery Time</h4>
             </label>
+            <div class="select">
+                <select name="delivery_time" required>
+                    <option value="1-3 Days" {% if marketing.delivery_time == "1-3 Days" %} selected {% endif %}>1-3 Days</option>
+                    <option value="3-5 Days" {% if marketing.delivery_time == "3-5 Days" %} selected {% endif %}>3-5 Days</option>
+                    <option value="5-7 Days" {% if marketing.delivery_time == "5-7 Days" %} selected {% endif %}>5-7 Days</option>
+                    <option value="8-10 Days" {% if marketing.delivery_time == "8-10 Days" %} selected {% endif %}>8-10 Days</option>
+                </select>
+            </div>
             <input type="text" name="delivery_time" placeholder="Delivery Time" value="{{ marketing.delivery_time }}" required>
         </div>
         <input type="text" name="id" value="{{ id }}" hidden>
@@ -138,7 +146,7 @@
             <label for="price">
                 <h4>Price per unit</h4>
             </label>
-            <input type="number" step="0.01" name="price" placeholder="Price per unit" value="{{ marketing.price }}" required>
+            <input type="number" step="0.001" name="price" placeholder="Price per unit" value="{{ marketing.price }}" required>
         </div>
         <div class="fieldset">
             <label for="title">
