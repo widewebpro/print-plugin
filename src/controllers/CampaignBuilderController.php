@@ -181,11 +181,15 @@ class CampaignBuilderController extends Controller
         $address = Craft::$app->request->getParam('address');
         $aptSuite = Craft::$app->request->getParam('aptSuite');
         $hoursOther = Craft::$app->request->getParam('hoursOther');
+        $primaryColor = Craft::$app->request->getParam('primaryColor');
+        $secondaryColor = Craft::$app->request->getParam('secondaryColor');
         $status = Craft::$app->request->getParam('status') ?? 1;
 //        if ($supportImages){
 //            $supportImages = $supportImages;
 //        }
         $query = [];
+        $query = $this->addToQuery('primaryColor', $primaryColor, $query);
+        $query = $this->addToQuery('secondaryColor', $secondaryColor, $query);
         $query = $this->addToQuery('userId', $userId, $query);
         $query = $this->addToQuery('site', $site, $query);
         $query = $this->addToQuery('phone', $phone, $query);
@@ -236,10 +240,14 @@ class CampaignBuilderController extends Controller
         $address = Craft::$app->request->getParam('address');
         $aptSuite = Craft::$app->request->getParam('aptSuite');
         $hoursOther = Craft::$app->request->getParam('hoursOther');
+        $primaryColor = Craft::$app->request->getParam('primaryColor');
+        $secondaryColor = Craft::$app->request->getParam('secondaryColor');
 //        if ($supportImages){
 //            $supportImages = json_encode($supportImages);
 //        }
         $query = [];
+        $query = $this->addToQuery('primaryColor', $primaryColor, $query);
+        $query = $this->addToQuery('secondaryColor', $secondaryColor, $query);
         $query = $this->addToQuery('layoutId', $layoutId, $query);
         $query = $this->addToQuery('site', $site, $query);
         $query = $this->addToQuery('phone', $phone, $query);
@@ -412,6 +420,8 @@ class CampaignBuilderController extends Controller
             'supportText' => $supportText,
             'headline' => $headline,
             'colorPicker' => $colorPicker,
+            'campaignPrimaryColor' => $campaign['primaryColor'],
+            'campaignSecondaryColor' => $campaign['secondaryColor'],
         ];
         $layout = $this->getLayoutById($layout);
         if ($layout){
