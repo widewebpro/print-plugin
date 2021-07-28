@@ -333,6 +333,13 @@ class MarketingBuilderController extends Controller
         }
         $currentUserGroups = Craft::$app->user->getIdentity()->getGroups();
         $groups = ['all'];
+        $pluginSso = Craft::$app->plugins->getPlugin('sso');
+        if ($pluginSso and $pluginSso->isInstalled and $pluginSso->getSettings()->userGroup){
+            $currentUser = Craft::$app->getUser()->getIdentity();
+            if ($currentUser and $currentUser->isInGroup($pluginSso->getSettings()->userGroup)){
+                $groups = [];
+            }
+        }
         foreach ($currentUserGroups as $currentUserGroup){
             array_push($groups, $currentUserGroup->handle);
         }

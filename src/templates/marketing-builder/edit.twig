@@ -98,6 +98,21 @@
                 <input type="number" name="width" value="{{ settings.width }}" placeholder="Width">
             </div>
         {% endif %}
+        {% if pluginSettings.choiceUserGroup %}
+            <div class="fieldset">
+                <label for="userGroup">
+                    <h4>Select User Group</h4>
+                </label>
+                <div class="select">
+                    <select name="userGroup">
+                        <option value="all">All</option>
+                        {% for userGroup in craft.app.userGroups.allGroups()%}
+                            <option value="{{ userGroup.handle }}" {% if userGroup.handle == marketing.userGroup %} selected {% endif %}>{{ userGroup.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        {% endif %}
         {% set vendorEmails = craft.app.globals.getSetByHandle('vendorEmails') %}
         {% if vendorEmails %}
             <div class="fieldset">
