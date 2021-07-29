@@ -51,7 +51,7 @@
 {% set selectedTab = 'content' %}
 {% set pdf = craft.printPlugin.getPdfById(id) %}
 {% set pluginSettings = craft.app.getPlugins().getPlugin('print-plugin').getSettings() %}
-<h2>{{ "Edit PDF" }}<a href="print-plugin/list-pdfs" class="create-btn"><p>List</p></a></h2>
+<h2>{{ "Edit PDF" }}<a href="{{ url('print-plugin/list-pdfs') }}" class="create-btn"><p>List</p></a></h2>
 <form action="/actions/print-plugin/default/update-pdf" method="POST" enctype="multipart/form-data">
   {{ csrfInput() }}
   <div class="fieldset">
