@@ -50,7 +50,7 @@ fields:         { label: "Fields"|t, url: url('print-plugin/fields/' ~ id) },
 
 {% set pdf = craft.printPlugin.getPdfById(id) %}
 {% set fields = craft.printPlugin.getFieldsFromUserModel() %}
-<h2>{{ "Fields Mapping" }}<a href="{{ url('print-plugin/list-pdfs') }}" class="create-btn"><p>List</p></a></h2>
+<h2>{{ "Fields Mapping" }}<a href="{{ url('print-plugin') }}" class="create-btn"><p>List</p></a></h2>
 {% set fieldsPlugins = craft.printPlugin.getAllFields() %}
 {% set fieldsPdf = pdf.fields %}
     {% if fieldsPdf %}
