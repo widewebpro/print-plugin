@@ -37,7 +37,7 @@
         <a href="{{ pluginCpUrl }}" class="btn submit add icon">{{ "Click Me!"|t('print-plugin') }}</a>
     </div>
 {% endset %}
-{% set selectedSubnavItem = 'static' %}
+{% set selectedSubnavItem = 'categories' %}
 {#{% set tabs = {#}
 {#content:            { label: "Content"|t, url: url('print-plugin/create-pdf') },#}
 {#outputs:         { label: "Outputs"|t, url: url('print-plugin/outputs') },#}
@@ -45,56 +45,42 @@
 {# The content of the CP Section#}
 {#{% set selectedTab = 'content' %}#}
 {% set content %}
+    {% set types = ['pdf', 'static'] %}
+
 
     <h2>{{ "Create new File" }}</h2>
-    <form action="/actions/print-plugin/static/create-static" method="POST" enctype="multipart/form-data">
+    <form action="/actions/print-plugin/categories/create" method="POST" enctype="multipart/form-data">
         {{ csrfInput() }}
         <div class="fieldset">
             <label for="heigth">
                 <h4>Title</h4>
             </label>
             <input type="text" name="title" placeholder="Title">
+            <input type="hidden" name="type" value="{{ craft.app.request.getParam('type') ?? 'pdf' }}">
+        </div>
+        <div class="fieldset">
+            <label for="type">
+                <h4>Select Type</h4>
+            </label>
+            <div class="select">
+                <select name="type">
+                    {% for t in types%}
+                        <option value="{{ t }}" {% if t == craft.app.request.getParam('type') ?? 'pdf' %} selected {% endif %}>{{ t|capitalize }}</option>
+                    {% endfor %}
+                </select>
+            </div>
         </div>
 
         <div class="fieldset">
             <label for="userGroup">
                 <h4>Select User Group</h4>
             </label>
-            <div class="select">
-                <select name="userGroup">
-                    <option value="all">All</option>
+            <div class="fieldset">
+                    <input type="checkbox" name="userGroup[]" value="all" checked> All <br>
                     {% for userGroup in craft.app.userGroups.allGroups()%}
-                        <option value="{{ userGroup.handle }}">{{ userGroup.name }}</option>
+                        <input type="checkbox" name="userGroup[]" value="{{ userGroup.handle }}"/> {{ userGroup.name }}<br>
                     {% endfor %}
-                </select>
             </div>
-        </div>
-        {% set categories= craft.printPluginCategories.getAllCategories('static') %}
-        <div class="fieldset">
-            <label for="category">
-                <h4>Select Category</h4>
-            </label>
-            <div class="select">
-                <select name="category">
-                    {% for category in categories %}
-                        <option value="{{ category.id }}">{{ category.title }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        </div>
-
-        <div class="fieldset">
-            <label class="submit-btn --grey">
-                Upload File
-                <input style="display: none;" type="file" name="file">
-            </label>
-        </div>
-
-        <div class="fieldset">
-            <label class="submit-btn --grey">
-                Upload Preview Image
-                <input style="display: none;" type="file" name="previewImage">
-            </label>
         </div>
 
         <input class="submit-btn" type="submit" value="Create">
@@ -127,7 +113,7 @@
             border-radius: 5px;
             min-width: 356px;
         }
-        .fieldset input {
+        .fieldset input:not([type='checkbox']) {
             padding: 6px 9px;
             min-width: 356px;
             border-radius: 3px;

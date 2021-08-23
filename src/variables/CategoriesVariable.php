@@ -28,7 +28,7 @@ use yii\db\Query;
  * @package   PrintPlugin
  * @since     1.0.0
  */
-class StaticVariable
+class CategoriesVariable
 {
     // Public Methods
     // =========================================================================
@@ -47,31 +47,15 @@ class StaticVariable
      * @param null $optional
      * @return string
      */
-    public function getStaticById($id)
+    public function getAllCategories($type)
     {
-        $static = (new Query())->select("*")->from('{{%print_static}}')->where(['id' => $id])->one();
-        return $static;
+        return PrintPlugin::$plugin->categories->getAllCategories($type);
     }
 
-    public function getAllStatic()
+    public function getCategoryById($id)
     {
-        $statics = (new Query())->select("*")->from('{{%print_static}}')->all();
-
-        return $statics;
-    }
-
-    public function getDownloadUrl($id)
-    {
-        $static = (new Query())->select("file")->from('{{%print_static}}')->where(['id' => $id])->one();
-        $filename = $static['file'];
-        $file = CRAFT_BASE_PATH.'/web/img/files/'.$filename;
-
-        header('Content-type: application/octet-stream');
-        header("Content-Type: ".mime_content_type($file));
-        header("Content-Disposition: attachment; filename=".$filename);
-        while (ob_get_level()) {
-            ob_end_clean();
-        }
-        readfile($file);
+        $result = PrintPlugin::$plugin->categories->getCategoryById($id);
+        $result['userGroup'] = \Opis\Closure\unserialize($result['userGroup']);
+        return $result;
     }
 }

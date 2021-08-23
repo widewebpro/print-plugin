@@ -58,7 +58,7 @@ class StaticController extends Controller
      *         The actions must be in 'kebab-case'
      * @access protected
      */
-    protected $allowAnonymous = ['create-static', 'enable-static', 'disable-static', 'download-static'];
+    protected $allowAnonymous = ['create-static', 'update-static', 'enable-static', 'disable-static', 'download-static'];
 
     // Public Methods
     // =========================================================================
@@ -74,6 +74,7 @@ class StaticController extends Controller
     {
         $title = Craft::$app->request->getBodyParam('title');
         $userGroup = Craft::$app->request->getBodyParam('userGroup');
+        $category = Craft::$app->request->getBodyParam('category');
         $file = $_FILES['file'];
         $previewImage = $_FILES['previewImage'];
         if ($previewImage and $previewImage['size'] != 0){
@@ -112,9 +113,66 @@ class StaticController extends Controller
                 [
                     'title' => $title,
                     'userGroup' => $userGroup,
+                    'category' => $category,
                     'file' => trim($url),
                     'previewImage' => trim($previewImage)
                 ])->execute();
+        return Craft::$app->getResponse()->redirect('/' . Craft::$app->config->general->cpTrigger .'/print-plugin/static');
+
+    }
+
+    public function actionUpdateStatic()
+    {
+        $title = Craft::$app->request->getBodyParam('title');
+        $userGroup = Craft::$app->request->getBodyParam('userGroup');
+        $category = Craft::$app->request->getBodyParam('category');
+        $id = Craft::$app->request->getBodyParam('id');
+        $file = $_FILES['file'];
+        $previewImage = $_FILES['previewImage'];
+        if ($previewImage and $previewImage['size'] != 0){
+            $file_name = rand(0, 99999999) . $previewImage['name'];
+            $folderId = Craft::$app->plugins->getPlugin('print-plugin')->getSettings()->choiceFolder;
+            $asset = new Asset();
+            $asset->tempFilePath = $previewImage['tmp_name'];
+            $asset->filename = $file_name;
+            $asset->title = $file_name;
+            $asset->newFolderId = VolumeFolder::find()->where('volumeId = '.$folderId )->one()->id;
+            $asset->volumeId = $folderId;
+            $asset->avoidFilenameConflicts = true;
+            $asset->setScenario(Asset::SCENARIO_CREATE);
+            Craft::$app->getElements()->saveElement($asset);
+            $previewImage = $asset->getUrl();
+        }else{
+            $previewImage = null;
+        }
+        $url = null;
+        if ($file){
+            $file_name = rand(0, 99999999) . $file['name'];
+            $folderId = Craft::$app->plugins->getPlugin('print-plugin')->getSettings()->choiceFolder;
+            $asset = new Asset();
+            $asset->tempFilePath = $file['tmp_name'];
+            $asset->filename = $file_name;
+            $asset->title = $file_name;
+            $asset->newFolderId = VolumeFolder::find()->where('volumeId = '.$folderId )->one()->id;
+            $asset->volumeId = $folderId;
+            $asset->avoidFilenameConflicts = true;
+            $asset->setScenario(Asset::SCENARIO_CREATE);
+            Craft::$app->getElements()->saveElement($asset);
+
+            $url = $asset->getUrl();
+        }
+        $data = [
+            'title' => $title,
+            'userGroup' => $userGroup,
+            'category' => $category
+        ];
+        if ($previewImage){
+            $data['previewImage'] = trim($previewImage);
+        }
+        if ($file){
+            $data['file'] = trim($url);
+        }
+        Craft::$app->db->createCommand()->update('{{%print_static}}', $data, ['id' => $id])->execute();
         return Craft::$app->getResponse()->redirect('/' . Craft::$app->config->general->cpTrigger .'/print-plugin/static');
 
     }

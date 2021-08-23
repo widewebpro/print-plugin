@@ -11,6 +11,8 @@
 namespace wideweb\printplugin;
 
 use wideweb\printplugin\services\PrintPluginService as PrintPluginServiceService;
+use wideweb\printplugin\services\CategoriesPrintService as CategoriesPrintService;
+use wideweb\printplugin\variables\CategoriesVariable;
 use wideweb\printplugin\variables\MarketingBuilderVariable;
 use wideweb\printplugin\variables\MarketingCampaignVariable;
 use wideweb\printplugin\variables\MarketingVariable;
@@ -45,6 +47,7 @@ use yii\base\Event;
  * @since     1.0.0
  *
  * @property  PrintPluginServiceService $printPluginService
+ * @property  CategoriesPrintService $CategoriesPrintService
  * @property  Settings $settings
  * @method    Settings getSettings()
  */
@@ -69,7 +72,7 @@ class PrintPlugin extends Plugin
      *
      * @var string
      */
-    public $schemaVersion = '1.1.4';
+    public $schemaVersion = '1.1.6';
 
     /**
      * Set to `true` if the plugin should have a settings view in the control panel.
@@ -95,6 +98,7 @@ class PrintPlugin extends Plugin
             'marketing' => ['label' => 'Custom Marketing', 'url' => 'print-plugin/marketing'],
             'marketing-builder' => ['label' => 'Marketing Builder', 'url' => 'print-plugin/marketing-builder'],
             'campaign-builder' => ['label' => 'Campaign Builder', 'url' => 'print-plugin/campaign-builder'],
+            'categories' => ['label' => 'Categories', 'url' => 'print-plugin/categories'],
         ];
         return $item;
     }
@@ -115,6 +119,9 @@ class PrintPlugin extends Plugin
     public function init()
     {
         parent::init();
+        $this->setComponents([
+            'categories' => \wideweb\printplugin\services\CategoriesPrintService::class,
+        ]);
         self::$plugin = $this;
 
         // Register our site routes
@@ -143,6 +150,7 @@ class PrintPlugin extends Plugin
                 //static
                 $event->rules['print-plugin/static'] = ['template' => 'print-plugin/static/index.twig'];
                 $event->rules['print-plugin/static/create'] = ['template' => 'print-plugin/static/create.twig'];
+                $event->rules['print-plugin/static/<widgetId:\d+>'] = ['template' => 'print-plugin/static/edit.twig'];
                 //marketing
                 $event->rules['print-plugin/marketing'] = ['template' => 'print-plugin/custom-marketing/index.twig'];
                 $event->rules['print-plugin/marketing/create'] = ['template' => 'print-plugin/custom-marketing/create.twig'];
@@ -155,6 +163,11 @@ class PrintPlugin extends Plugin
                 $event->rules['print-plugin/campaign-builder'] = ['template' => 'print-plugin/campaign-builder/index.twig'];
 //                $event->rules['print-plugin/campaign-builder/create'] = ['template' => 'print-plugin/campaign-builder/create.twig'];
 //                $event->rules['print-plugin/campaign-builder/<widgetId:\d+>'] = ['template' => 'print-plugin/campaign-builder/edit.twig'];
+                // categories
+                $event->rules['print-plugin/categories'] = ['template' => 'print-plugin/categories/index.twig'];
+                $event->rules['print-plugin/categories/create'] = ['template' => 'print-plugin/categories/create.twig'];
+                $event->rules['print-plugin/categories/<widgetId:\d+>'] = ['template' => 'print-plugin/categories/edit.twig'];
+
             }
         );
 
@@ -170,6 +183,7 @@ class PrintPlugin extends Plugin
                 $variable->set('printPluginMarketing', MarketingVariable::class);
                 $variable->set('printPluginMarketingBuilder', MarketingBuilderVariable::class);
                 $variable->set('printPluginCampaign', MarketingCampaignVariable::class);
+                $variable->set('printPluginCategories', CategoriesVariable::class);
             }
         );
 

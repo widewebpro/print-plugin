@@ -40,61 +40,69 @@
 
 {# The content of the CP Section#}
 {% set content %}
-    {% set selectedSubnavItem = 'static' %}
-    <h2>{{ "Lists Pdfs" }}</h2>
+    <h2>{{ "Lists Custom Marketing" }}</h2>
 
     <div class="btn-wrap --content-left">
-        <a href="{{ url('print-plugin/static/create') }}" class="create-new-pdf-btn">Create</a>
+        <a href="{{ url('print-plugin/marketing-builder/create') }}" class="create-new-pdf-btn">Create</a>
     </div>
+    {% set selectedSubnavItem = 'marketing-builder' %}
 
-    {% set pdfs= craft.printPluginStatic.getAllStatic() %}
+    {% set marketings = craft.printPluginMarketingBuilder.getAllMarketing() %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.2.0/jspdf.umd.min.js"></script>
 
 
     <table id="pdfs-list" class="data">
         <thead>
         <tr>
+            <th style="width:10%" scope="col" data-attribute="title" class="orderable">Id</th>
             <th style="width:10%" scope="col" data-attribute="title" class="orderable">Title</th>
+            <th style="width:10%" scope="col" data-attribute="title" class="orderable">Vendor</th>
+            {#<th style="width:10%" scope="col" data-attribute="title" class="orderable">Owner</th>#}
             <th style="width:10%" scope="col" data-attribute="title" class="orderable">Date Created</th>
-            <th style="width:10%" scope="col" data-attribute="title" class="orderable">Download</th>
-            <th style="width:10%" scope="col" data-attribute="title" class="orderable">Status</th>
             <th style="width:10%" scope="col" data-attribute="title" class="orderable">Delete</th>
+            <th style="width:10%" scope="col" data-attribute="title" class="orderable">Status</th>
         </tr>
         </thead>
         <tbody>
-        {% for pdf in pdfs %}
-            <tr data-id="{{ pdf.id }}" data-name=" item.address ">
+        {% for marketing in marketings %}
+            <tr data-id="{{ marketing.id }}" data-name=" item.address ">
                 <td>
-                    <a href="{{url('print-plugin/static/')}}/{{ pdf.id }}">
-                        {{ pdf.title }}
+                    <a href="{{url('print-plugin/marketing-builder/')}}/{{ marketing.id }}">
+                        {{ marketing.id }}
                     </a>
                 </td>
                 <td>
-                    {{ pdf.dateCreated }}
+                    <a href="{{url('print-plugin/marketing-builder/')}}/{{ marketing.id }}">
+                        {{ marketing.title }}
+                    </a>
                 </td>
+                <td>
+                    {{ marketing.vendor }}
+                </td>
+                {#<td>#}
+                {#{{ marketing.userId }}#}
+                {#</td>#}
+                <td>
+                    {{ marketing.dateCreated }}
+                </td>
+
 
                 <td>
                     <a class="create-pdf"
-                       href="/actions/print-plugin/static/download-static?id={{ pdf.id }}"
-                    >Download File</a>
+                       href="/actions/print-plugin/marketing-builder/delete-marketing-builder-by-id?id={{ marketing.id }}"
+                    >Delete Marketing</a>
                 </td>
                 <td>
-                    {% if pdf.enabled == 0 %}
+                    {% if marketing.enabled == 0 %}
                         <a class="create-pdf"
-                           href="/actions/print-plugin/static/enable-static?id={{ pdf.id }}"
-                        >Enable File</a>
-                    {% elseif pdf.enabled == 1 %}
+                           href="/actions/print-plugin/marketing-builder/enable-marketing-builder?id={{ marketing.id }}"
+                        >Enable Marketing</a>
+                    {% elseif marketing.enabled == 1 %}
                         <a class="create-pdf"
-                           href="/actions/print-plugin/static/disable-static?id={{ pdf.id }}"
-                        >Disable File</a>
+                           href="/actions/print-plugin/marketing-builder/disable-marketing-builder?id={{ marketing.id }}"
+                        >Disable Marketing</a>
                     {% endif %}
                 </td>
-                <td>
-                    <a class="create-pdf"
-                       href="/actions/print-plugin/static/delete-static-by-id?id={{ pdf.id }}"
-                    >Delete File</a>
-                </td>
-
 
             </tr>
         {% endfor %}
@@ -268,6 +276,7 @@
                 transform: rotate(360deg);
             }
         }
+
 
     </style>
 

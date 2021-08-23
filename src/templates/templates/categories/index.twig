@@ -40,59 +40,57 @@
 
 {# The content of the CP Section#}
 {% set content %}
-    {% set selectedSubnavItem = 'static' %}
-    <h2>{{ "Lists Pdfs" }}</h2>
+    {% set tabs = {
+    pdf: { label: "PDF categories"|t, url: url('print-plugin/categories?type=pdf') },
+    static: { label: "Static content categories"|t, url: url('print-plugin/categories?type=static') },
+    } %}
+    {% set selectedTab = craft.app.request.getParam('type') ?? 'pdf' %}
+    {% set selectedSubnavItem = 'categories' %}
+    <h2>{{ "Lists Categories" }}</h2>
 
     <div class="btn-wrap --content-left">
-        <a href="{{ url('print-plugin/static/create') }}" class="create-new-pdf-btn">Create</a>
+        <a href="{{ url('print-plugin/categories/create?type='~selectedTab) }}" class="create-new-pdf-btn">Create</a>
     </div>
 
-    {% set pdfs= craft.printPluginStatic.getAllStatic() %}
+    {% set categories= craft.printPluginCategories.getAllCategories(selectedTab) %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.2.0/jspdf.umd.min.js"></script>
 
 
-    <table id="pdfs-list" class="data">
+    <table id="categories-list" class="data">
         <thead>
         <tr>
             <th style="width:10%" scope="col" data-attribute="title" class="orderable">Title</th>
             <th style="width:10%" scope="col" data-attribute="title" class="orderable">Date Created</th>
-            <th style="width:10%" scope="col" data-attribute="title" class="orderable">Download</th>
             <th style="width:10%" scope="col" data-attribute="title" class="orderable">Status</th>
             <th style="width:10%" scope="col" data-attribute="title" class="orderable">Delete</th>
         </tr>
         </thead>
         <tbody>
-        {% for pdf in pdfs %}
-            <tr data-id="{{ pdf.id }}" data-name=" item.address ">
+        {% for category in categories %}
+            <tr data-id="{{ category.id }}" data-name=" item.address ">
                 <td>
-                    <a href="{{url('print-plugin/static/')}}/{{ pdf.id }}">
-                        {{ pdf.title }}
+                    <a href="{{url('print-plugin/categories')}}/{{ category.id }}?type={{ selectedTab }}">
+                    {{ category.title }}
                     </a>
                 </td>
                 <td>
-                    {{ pdf.dateCreated }}
-                </td>
-
-                <td>
-                    <a class="create-pdf"
-                       href="/actions/print-plugin/static/download-static?id={{ pdf.id }}"
-                    >Download File</a>
+                    {{ category.dateCreated }}
                 </td>
                 <td>
-                    {% if pdf.enabled == 0 %}
+                    {% if category.status == 0 %}
                         <a class="create-pdf"
-                           href="/actions/print-plugin/static/enable-static?id={{ pdf.id }}"
-                        >Enable File</a>
-                    {% elseif pdf.enabled == 1 %}
+                           href="/actions/print-plugin/categories/enable?id={{ category.id }}&type={{ category.type }}"
+                        >Enable</a>
+                    {% elseif category.status == 1 %}
                         <a class="create-pdf"
-                           href="/actions/print-plugin/static/disable-static?id={{ pdf.id }}"
-                        >Disable File</a>
+                           href="/actions/print-plugin/categories/disable?id={{ category.id }}&type={{ category.type }}"
+                        >Disable</a>
                     {% endif %}
                 </td>
                 <td>
                     <a class="create-pdf"
-                       href="/actions/print-plugin/static/delete-static-by-id?id={{ pdf.id }}"
-                    >Delete File</a>
+                       href="/actions/print-plugin/categories/delete?id={{ category.id }}&type={{ category.type }}"
+                    >Delete</a>
                 </td>
 
 

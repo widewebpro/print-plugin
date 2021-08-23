@@ -1,0 +1,148 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Print Plugin plugin for Craft CMS 3.x
+ *
+ * Print Plugin index.twig
+ *
+ * @author    WideWeb
+ * @copyright Copyright (c) 2020 WideWeb
+ * @link      WideWeb.pro
+ * @package   PrintPlugin
+ * @since     1.0.0
+ */
+#}
+
+{% extends "_layouts/cp" %}
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("wideweb\\printplugin\\assetbundles\\printplugin\\PrintPluginAsset") %}
+{% do view.registerAssetBundle("wideweb\\printplugin\\assetbundles\\indexcpsection\\IndexCPSectionAsset") %}
+
+{# Link for the ? icon at the bottom of the page #}
+{% set docsUrl = "https://github.com/wideweb/print-plugin/blob/master/README.md" %}
+
+{# The title of this CP section #}
+{% set title = "Print Plugin" %}
+
+{# The URL to this plugin's base CP section #}
+{% set pluginCpUrl = url('print-plugin') %}
+
+{# Get a URL to an image in our AssetBundle #}
+{% set iconUrl = view.getAssetManager().getPublishedUrl('@wideweb/printplugin/assetbundles/indexcpsection/dist', true) ~ '/img/Index-icon.svg' %}
+
+{# Content that should appear in the page header#}
+{% set extraPageHeaderHtml %}
+    <div class="buttons">
+        <a href="{{ pluginCpUrl }}" class="btn submit add icon">{{ "Click Me!"|t('print-plugin') }}</a>
+    </div>
+{% endset %}
+
+{# The content of the CP Section#}
+{% set content %}
+    {% set id = craft.app.request.getSegments()|last %}
+
+    {% set tabs = {
+    content:            { label: "Content"|t, url: url('print-plugin/create-pdf') },
+    outputs:         { label: "Outputs"|t, url: url('print-plugin/outputs/' ~ id) },
+    fields:         { label: "Fields"|t, url: url('print-plugin/fields/' ~ id) },
+    } %}
+    {# The content of the CP Section#}
+    {% set selectedTab = 'fields' %}
+    {% set pdf = craft.printPlugin.getPdfById(id) %}
+    <h2>{{ "Fields" }}</h2>
+    {% set fieldsPlugins = craft.printPlugin.getAllFields() %}
+<form action="/actions/print-plugin/default/set-fields-for-pdf" method="post">
+    {{ csrfInput() }}
+    <input type="hidden" value="{{ id }}" name="id">
+    {% set pdfFields = pdf.fields|json_decode %}
+{% for field in fieldsPlugins %}
+
+    <div class="fieldset">
+        <input
+            id="{{ field.handle }}"
+            type="checkbox"
+            name="fields[{{ field.handle }}]"
+            {% if field.handle in pdfFields %} checked {% endif %}>
+        <label for="{{ field.handle }}">
+            {{ field.title }}
+        </label>
+    </div>
+
+{% endfor %}
+    <input class="submit-btn" type="submit" value="Save">
+</form>
+
+<style>
+    .fieldset {
+        margin-bottom: 12px;
+    }
+    .fieldset label {
+        display: block;
+        align-items: center;
+        padding-left: 24px;
+        position: relative;
+        cursor: pointer;
+    }
+    .fieldset label:before {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 16px !important;
+        height: 16px;
+        box-sizing: border-box;
+        content: '.';
+        font-size: 0;
+        background-color: #fbfcfe;
+        border: 1px solid rgba(96, 125, 159, 0.4);
+        background-clip: padding-box;
+        border-radius: 3px;
+    }
+    .fieldset input:checked + label:before {
+        content: 'check';
+        font-size: 15px;
+        font-family: 'Craft';
+        speak: none;
+        text-rendering: optimizeLegibility;
+        font-weight: normal;
+        font-variant: normal;
+        text-transform: none;
+        direction: ltr;
+        display: inline-block;
+        text-align: center;
+        font-style: normal;
+        vertical-align: middle;
+        word-wrap: normal !important;
+        user-select: none;
+        opacity: 0.8;
+        line-height: 16px;
+        color: #1f2933;
+    }
+    .fieldset label:after {
+        content: '.';
+        font-size: 0;
+    }
+    .fieldset input {
+        display: none;
+    }
+    .submit-btn {
+        align-items: center;
+        justify-content: center;
+        border-radius: 5px;
+        padding: 7px 14px;
+        border: none;
+        text-align: center;
+        white-space: nowrap;
+        user-select: none;
+        cursor: pointer;
+        box-sizing: border-box;
+        appearance: none;
+        outline: none;
+        color: #fff;
+        font-size: inherit;
+        background-color: #e5422b;
+    }
+</style>
+
+{% endset %}

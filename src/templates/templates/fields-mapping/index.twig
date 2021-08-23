@@ -1,0 +1,85 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Print Plugin plugin for Craft CMS 3.x
+ *
+ * Print Plugin index.twig
+ *
+ * @author    WideWeb
+ * @copyright Copyright (c) 2020 WideWeb
+ * @link      WideWeb.pro
+ * @package   PrintPlugin
+ * @since     1.0.0
+ */
+#}
+
+{% extends "_layouts/cp" %}
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("wideweb\\printplugin\\assetbundles\\printplugin\\PrintPluginAsset") %}
+{% do view.registerAssetBundle("wideweb\\printplugin\\assetbundles\\indexcpsection\\IndexCPSectionAsset") %}
+
+{# Link for the ? icon at the bottom of the page #}
+{% set docsUrl = "https://github.com/wideweb/print-plugin/blob/master/README.md" %}
+
+{# The title of this CP section #}
+{% set title = "Print Plugin" %}
+
+{# The URL to this plugin's base CP section #}
+{% set pluginCpUrl = url('print-plugin') %}
+
+{# Get a URL to an image in our AssetBundle #}
+{% set iconUrl = view.getAssetManager().getPublishedUrl('@wideweb/printplugin/assetbundles/indexcpsection/dist', true) ~ '/img/Index-icon.svg' %}
+{# Content that should appear in the page header#}
+{% set extraPageHeaderHtml %}
+    <div class="buttons">
+        <a href="{{ pluginCpUrl }}" class="btn submit add icon">{{ "Click Me!"|t('print-plugin') }}</a>
+    </div>
+{% endset %}
+{% set content %}
+    {% set selectedSubnavItem = 'fields' %}
+    {#{% set pdf = craft.printPlugin.getPdfById(id) %}#}
+    {% set fields = craft.printPlugin.getAllFields() %}
+    <h2>{{ "Fields Mapping" }}<a href="{{url('print-plugin/fields/create')}}" class="create-btn"><p>Create Field</p></a></h2>
+    <table id="priceList" class="data">
+        <thead>
+        <tr>
+            <th style="width:10%" scope="col" data-attribute="title" class="orderable">Id</th>
+            <th style="width:10%" scope="col" data-attribute="title" class="orderable">Title</th>
+            <th style="width:10%" scope="col" data-attribute="title" class="orderable">Type</th>
+            <th style="width:10%" scope="col" data-attribute="title" class="orderable">Handle</th>
+            <th style="width:10%" scope="col" data-attribute="title" class="orderable">Date Created</th>
+            <th style="width:3%" scope="col" data-attribute="title" class="orderable">Delete</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for field in fields %}
+            <tr data-id="{{ field.id }}" data-name=" item.address ">
+                <td>
+                    <a href="{{url('print-plugin/fields')}}/{{ field.id }}">
+                        {{ field.id }}
+                    </a>
+
+                </td>
+                <td>
+                    {{ field.title }}
+                </td>
+                <td>
+                    {{ field.handle }}
+                </td>
+                <td>
+                    {{ field.type|capitalize }}
+                </td>
+                <td>
+                    {{ field.dateCreated }}
+                </td>
+                <td>
+                    <a href="/actions/print-plugin/default/delete-field-by-id?id={{ field.id }}">X</a>
+                </td>
+            </tr>
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+{% endset %}

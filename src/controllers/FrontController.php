@@ -58,7 +58,7 @@ class FrontController extends Controller
      *         The actions must be in 'kebab-case'
      * @access protected
      */
-    protected $allowAnonymous = ['get-all-pdf', 'get-all-static', 'get-pdf-by-id', 'get-fields-from-user-model', 'get-all-fields'];
+    protected $allowAnonymous = ['get-all-pdf', 'get-all-pdf-by-tabs', 'get-all-static', 'get-pdf-by-id', 'get-fields-from-user-model', 'get-all-fields'];
 
     // Public Methods
     // =========================================================================
@@ -82,6 +82,7 @@ class FrontController extends Controller
         foreach ($currentUserGroups as $currentUserGroup){
             array_push($groups, $currentUserGroup->handle);
         }
+
         if ($status == 'any'){
             $pdfs = (new Query())->select("*")->from('{{%print_pdfs}}')->where(['userGroup' => $groups])->all();
         }elseif($status == 1){
@@ -90,6 +91,43 @@ class FrontController extends Controller
             $pdfs = [];
         }
         return \GuzzleHttp\json_encode($pdfs);
+    }
+
+    public function actionGetAllPdfByTabs($status = 'any')
+    {
+        $categoryGroups = (new Query())->select('*')->from('{{%print_categories}}')->where(['type' => 'pdf'])->all();
+        $allowedCategories = [];
+
+        $comingSoon = Craft::$app->plugins->getPlugin('print-plugin')->getSettings()->comingSoon;
+        if ($comingSoon){
+            $status = 'any';
+        }else{
+            $status = 1;
+        }
+        $currentUserGroups = Craft::$app->user->getIdentity()->getGroups();
+        $groups = ['all'];
+        foreach ($currentUserGroups as $currentUserGroup){
+            array_push($groups, $currentUserGroup->handle);
+        }
+        foreach ($categoryGroups as $categoryGroup){
+            $array = unserialize($categoryGroup['userGroup']);
+            if (array_intersect($groups, $array)){
+                $allowedCategories[] = $categoryGroup;
+            }
+        }
+        $pdfs = [];
+        if ($status == 'any'){
+            foreach ($allowedCategories as $allowedCategory){
+            $pdfs[$allowedCategory['title']] = (new Query())->select("*")->from('{{%print_pdfs}}')->where(['userGroup' => $groups, 'category' => $allowedCategory['id']])->all();
+            }
+        }elseif($status == 1){
+            foreach ($allowedCategories as $allowedCategory){
+                $pdfs[$allowedCategory['title']] = (new Query())->select("*")->from('{{%print_pdfs}}')->where(['enabled' => 1, 'userGroup' => $groups, 'category' => $allowedCategory['id']])->all();
+            }
+        }else{
+            $pdfs = [];
+        }
+        return $this->asJson($pdfs);
     }
 
     public function actionGetPdfById($id)
@@ -154,6 +192,41 @@ class FrontController extends Controller
             $pdfs = (new Query())->select("*")->from('{{%print_static}}')->where(['enabled' => 1, 'userGroup' => $groups])->all();
         }else{
             $pdfs = [];
+        }
+        return \GuzzleHttp\json_encode($pdfs);
+    }
+
+    public function actionGetAllStaticByTabs($status = 'any')
+    {
+        $categoryGroups = (new Query())->select('*')->from('{{%print_categories}}')->where(['type' => 'static'])->all();
+
+        $comingSoon = Craft::$app->plugins->getPlugin('print-plugin')->getSettings()->comingSoon;
+        if ($comingSoon){
+            $status = 'any';
+        }else{
+            $status = 1;
+        }
+        $currentUserGroups = Craft::$app->user->getIdentity()->getGroups();
+        $groups = ['all'];
+        foreach ($currentUserGroups as $currentUserGroup){
+            array_push($groups, $currentUserGroup->handle);
+        }
+        $allowedCategories = [];
+        foreach ($categoryGroups as $categoryGroup){
+            $array = unserialize($categoryGroup['userGroup']);
+            if (array_intersect($groups, $array)){
+                $allowedCategories[] = $categoryGroup;
+            }
+        }
+        $pdfs = [];
+        if ($status == 'any'){
+            foreach ($allowedCategories as $allowedCategory){
+                $pdfs[$allowedCategory['title']] = (new Query())->select("*")->from('{{%print_static}}')->where(['userGroup' => $groups, 'category' => $allowedCategory['id']])->all();
+            }
+        }elseif($status == 1){
+            foreach ($allowedCategories as $allowedCategory){
+                $pdfs[$allowedCategory['title']] = (new Query())->select("*")->from('{{%print_static}}')->where(['enabled' => 1, 'userGroup' => $groups, 'category' => $allowedCategory['id']])->all();
+            }
         }
         return \GuzzleHttp\json_encode($pdfs);
     }

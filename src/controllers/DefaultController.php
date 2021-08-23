@@ -156,6 +156,7 @@ class DefaultController extends Controller
         $title = Craft::$app->request->getBodyParam('title');
         $userGroup = Craft::$app->request->getBodyParam('userGroup');
         $typeFile = Craft::$app->request->getBodyParam('typeFile');
+        $category = Craft::$app->request->getBodyParam('category');
         $file = $_FILES['file'];
         $previewImage = $_FILES['previewImage'];
         if ($previewImage and $previewImage['size'] != 0){
@@ -197,6 +198,7 @@ class DefaultController extends Controller
                     'type' => $typeOfSize,
                     'fileType' => $typeFile,
                     'userGroup' => $userGroup,
+                    'category' => $category,
                     'settings' => json_encode(
                         [
                             'height' => null,
@@ -214,6 +216,7 @@ class DefaultController extends Controller
                     'type' => $typeOfSize,
                     'fileType' => $typeFile,
                     'userGroup' => $userGroup,
+                    'category' => $category,
                     'settings' => json_encode(
                         [
                             'height' => $height,
@@ -242,6 +245,7 @@ class DefaultController extends Controller
         $size = Craft::$app->request->getBodyParam('size');
         $userGroup = Craft::$app->request->getBodyParam('userGroup');
         $typeFile = Craft::$app->request->getBodyParam('typeFile');
+        $category = Craft::$app->request->getBodyParam('category');
         $previewImage = $_FILES['previewImage'];
         $file = $_FILES['file'];
         if ($previewImage and $previewImage['size'] != 0){
@@ -285,6 +289,7 @@ class DefaultController extends Controller
                 [
                     'title' => $title,
                     'type' => $typeOfSize,
+                    'category' => $category,
                     'userGroup' => $userGroup,
                     'fileType' => $typeFile,
                     'settings' => json_encode(
@@ -300,6 +305,7 @@ class DefaultController extends Controller
                 [
                     'title' => $title,
                     'type' => $typeOfSize,
+                    'category' => $category,
                     'userGroup' => $userGroup,
                     'fileType' => $typeFile,
                     'settings' => json_encode(
