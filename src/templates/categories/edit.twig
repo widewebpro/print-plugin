@@ -61,20 +61,38 @@
             </label>
             <input type="text" name="title" value="{{ category.title }}" placeholder="Title">
             <input type="hidden" name="id" value="{{ category.id }}">
+            <input type="hidden" name="type" value="{{ category.type }}">
         </div>
 
+        {#<div class="fieldset">#}
+            {#<label for="type">#}
+                {#<h4>Select Type</h4>#}
+            {#</label>#}
+            {#<div class="select">#}
+                {#<select name="type">#}
+                    {#{% for t in types%}#}
+                        {#<option value="{{ t }}" {% if t == category.type %} selected {% endif %}>{{ t|capitalize }}</option>#}
+                    {#{% endfor %}#}
+                {#</select>#}
+            {#</div>#}
+        {#</div>#}
+        {% set parents = craft.printPluginCategories.getAllParentCategories(category.type) %}
+        {% if not craft.printPluginCategories.getChildCategoriesByCategory(category.id, category.type) and category.type == 'pdf'%}
         <div class="fieldset">
             <label for="type">
-                <h4>Select Type</h4>
+                <h4>Select Parent</h4>
             </label>
             <div class="select">
-                <select name="type">
-                    {% for t in types%}
-                        <option value="{{ t }}" {% if t == category.type %} selected {% endif %}>{{ t|capitalize }}</option>
+                <select name="parent">
+                    <option value=""> - </option>
+
+                    {% for parent in parents if parent.id != id %}
+                        <option value="{{ parent.id }}" {% if parent.id == category.parent %} selected {% endif %}>{{ parent.title|capitalize }}</option>
                     {% endfor %}
                 </select>
             </div>
         </div>
+        {% endif %}
         <div class="fieldset">
             <label for="userGroup">
                 <h4>Select User Group</h4>

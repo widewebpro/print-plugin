@@ -52,7 +52,7 @@
         <a href="{{ url('print-plugin/categories/create?type='~selectedTab) }}" class="create-new-pdf-btn">Create</a>
     </div>
 
-    {% set categories= craft.printPluginCategories.getAllCategories(selectedTab) %}
+    {% set categories = craft.printPluginCategories.getAllParentCategories(selectedTab) %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.2.0/jspdf.umd.min.js"></script>
 
 
@@ -68,6 +68,7 @@
         <tbody>
         {% for category in categories %}
             <tr data-id="{{ category.id }}" data-name=" item.address ">
+                {% set childs = craft.printPluginCategories.getChildCategoriesByCategory(category.id, selectedTab) %}
                 <td>
                     <a href="{{url('print-plugin/categories')}}/{{ category.id }}?type={{ selectedTab }}">
                     {{ category.title }}
@@ -92,9 +93,37 @@
                        href="/actions/print-plugin/categories/delete?id={{ category.id }}&type={{ category.type }}"
                     >Delete</a>
                 </td>
-
-
             </tr>
+            {% if childs %}
+                {% for child in childs %}
+                <tr data-id="{{ child.id }}" data-name=" item.address ">
+                    <td>
+                        ----<a href="{{url('print-plugin/categories')}}/{{ child.id }}?type={{ selectedTab }}">
+                            {{ child.title }}
+                        </a>
+                    </td>
+                    <td>
+                        {{ child.dateCreated }}
+                    </td>
+                    <td>
+                        {% if child.status == 0 %}
+                            <a class="create-pdf"
+                               href="/actions/print-plugin/categories/enable?id={{ child.id }}&type={{ child.type }}"
+                            >Enable</a>
+                        {% elseif child.status == 1 %}
+                            <a class="create-pdf"
+                               href="/actions/print-plugin/categories/disable?id={{ child.id }}&type={{ child.type }}"
+                            >Disable</a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a class="create-pdf"
+                           href="/actions/print-plugin/categories/delete?id={{ child.id }}&type={{ child.type }}"
+                        >Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            {% endif %}
         {% endfor %}
 
         </tbody>

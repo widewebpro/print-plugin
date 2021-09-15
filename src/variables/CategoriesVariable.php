@@ -58,4 +58,16 @@ class CategoriesVariable
         $result['userGroup'] = \Opis\Closure\unserialize($result['userGroup']);
         return $result;
     }
+
+    public function getAllParentCategories($type)
+    {
+        $result = PrintPlugin::$plugin->categories->getAllParentCategories($type);
+        return $result;
+    }
+
+    public function getChildCategoriesByCategory($id, $type)
+    {
+        $result = PrintPlugin::$plugin->categories->getChildCategoriesByCategory($id, $type);
+        return $result;
+    }
 }

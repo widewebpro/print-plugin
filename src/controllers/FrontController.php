@@ -115,14 +115,25 @@ class FrontController extends Controller
                 $allowedCategories[] = $categoryGroup;
             }
         }
+
         $pdfs = [];
         if ($status == 'any'){
             foreach ($allowedCategories as $allowedCategory){
-            $pdfs[$allowedCategory['title']] = (new Query())->select("*")->from('{{%print_pdfs}}')->where(['userGroup' => $groups, 'category' => $allowedCategory['id']])->all();
+                $childs = PrintPlugin::$plugin->categories->getChildCategoriesByCategory($allowedCategory['id'], 'pdf');
+                if ($childs){
+                    foreach ($childs as $child){
+                    $pdfs[$allowedCategory['title']][$child['title']] = (new Query())->select("*")->from('{{%print_pdfs}}')->where(['userGroup' => $groups, 'category' => $child['id']])->all();
+                    }
+                }
             }
         }elseif($status == 1){
             foreach ($allowedCategories as $allowedCategory){
-                $pdfs[$allowedCategory['title']] = (new Query())->select("*")->from('{{%print_pdfs}}')->where(['enabled' => 1, 'userGroup' => $groups, 'category' => $allowedCategory['id']])->all();
+                $childs = PrintPlugin::$plugin->categories->getChildCategoriesByCategory($allowedCategory['id'], 'pdf');
+                if ($childs){
+                    foreach ($childs as $child){
+                        $pdfs[$allowedCategory['title']][$child['title']] = (new Query())->select("*")->from('{{%print_pdfs}}')->where(['enabled' => 1,'userGroup' => $groups, 'category' => $child['id']])->all();
+                    }
+                }
             }
         }else{
             $pdfs = [];

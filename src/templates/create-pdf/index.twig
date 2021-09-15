@@ -45,7 +45,7 @@
 {#{% set selectedTab = 'content' %}#}
 {% set content %}
 {% set pluginSettings = craft.app.getPlugins().getPlugin('print-plugin').getSettings() %}
-{% set categories= craft.printPluginCategories.getAllCategories('pdf') %}
+{% set categories= craft.printPluginCategories.getAllParentCategories('pdf') %}
 <h2>{{ "Create new Pdf" }}</h2>
 <form action="/actions/print-plugin/default/create-pdf" method="POST" enctype="multipart/form-data">
   {{ csrfInput() }}
@@ -108,8 +108,10 @@
     </label>
     <div class="select">
       <select name="category">
-          {% for category in categories %}
-            <option value="{{ category.id }}">{{ category.title }}</option>
+          {% for category in categories if craft.printPluginCategories.getChildCategoriesByCategory(category.id, category.type) %}
+              {% for cat in craft.printPluginCategories.getChildCategoriesByCategory(category.id, category.type) %}
+            <option value="{{ cat.id }}">{{ category.title }} - {{  cat.title }}</option>
+            {% endfor %}
           {% endfor %}
       </select>
     </div>
@@ -117,7 +119,7 @@
 {% if pluginSettings.choiceFormatFile %}
   <div class="fieldset">
     <label for="userGroup">
-      <h4>Select Type file for dowload</h4>
+      <h4>Select Type file for download</h4>
     </label>
     <div class="select">
       <select name="typeFile">
