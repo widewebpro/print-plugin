@@ -60,7 +60,7 @@ class DefaultController extends Controller
      */
     protected $allowAnonymous = ['index', 'do-something', 'create-pdf', 'update-pdf', 'update-pdf-outputs',
         'print-pdf-by-id', 'create-field', 'delete-field-by-id', 'get-html', 'delete-pdf-by-id', 'set-fields-for-pdf',
-        'enable-pdf', 'disable-pdf'];
+        'enable-pdf', 'disable-pdf', 'duplicate-pdfs'];
 
     // Public Methods
     // =========================================================================
@@ -390,9 +390,9 @@ class DefaultController extends Controller
         $checkOutputs = Craft::$app->request->getParam('outputs');
         if ($pdf){
             if ($checkOutputs){
-            $html = $this->outputPdf($pdf, $checkOutputs);
-                }else{
-            $html = $this->outputPdf($pdf);
+                $html = $this->outputPdf($pdf, $checkOutputs);
+            }else{
+                $html = $this->outputPdf($pdf);
             }
             if ($html){
                 return json_encode(['html' => $html, 'settings' => ['format' => $pdf['type'], 'size' => $pdf['settings'] ]]);
@@ -434,17 +434,17 @@ class DefaultController extends Controller
                     $field = (new Query())->select('*')->from('{{%print_fields}}')->where(['handle' => $key])->one();
                     if ($field['type'] == 'text'){
                         if ($value->type != 'custom'){
-                        $f = $value->content;
-                        $outputs[$key] = $currentUser->$f;
+                            $f = $value->content;
+                            $outputs[$key] = $currentUser->$f;
                         }else{
-                        $outputs[$key] = $value->content;
+                            $outputs[$key] = $value->content;
                         }
                     }elseif ($field['type'] == 'asset'){
                         $f = $value->content;
                         if ($f != 'photo'){
                             $fType = $value->type;
                             if ($fType == 'default'){
-                            $asset = $currentUser->$f->one();
+                                $asset = $currentUser->$f->one();
                                 if ($asset){
                                     $outputs[$key] = $asset->getUrl();
                                 }else{
@@ -457,7 +457,7 @@ class DefaultController extends Controller
                             $f = $value->content;
                             $fType = $value->type;
                             if ($fType == 'default'){
-                            $asset = $currentUser->$f;
+                                $asset = $currentUser->$f;
                                 if ($asset){
                                     $outputs[$key] = $asset->getUrl();
                                 }
@@ -467,7 +467,7 @@ class DefaultController extends Controller
                         }
                     }
                 }
-                }else{
+            }else{
                 $outputs = [];
             }
         }
@@ -505,10 +505,10 @@ class DefaultController extends Controller
     }
 
     public function actionDeletePdfById($id)
-        {
-            Craft::$app->db->createCommand()->delete('{{%print_pdfs}}', ['id' => $id])->execute();
-            return Craft::$app->getResponse()->redirect('/' . Craft::$app->config->general->cpTrigger .'/print-plugin/');
-        }
+    {
+        Craft::$app->db->createCommand()->delete('{{%print_pdfs}}', ['id' => $id])->execute();
+        return Craft::$app->getResponse()->redirect('/' . Craft::$app->config->general->cpTrigger .'/print-plugin/');
+    }
 
     public function actionSetFieldsForPdf()
     {
@@ -552,6 +552,19 @@ class DefaultController extends Controller
                 ], ['id' => $id])->execute();
         }
         return Craft::$app->getResponse()->redirect(UrlHelper::cpUrl('/' . Craft::$app->config->general->cpTrigger .'/print-plugin'));
+    }
+
+    public function actionDuplicatePdfs()
+    {
+        $this->requireAdmin();
+        $ids = Craft::$app->getRequest()->getParam('ids');
+        if ($ids and is_array($ids)){
+            $pdfs = (new Query())->select('title, type, settings, outputs, enabled, userGroup, fields, file, fileType, previewImage, category')->where(['id' => $ids])->from('{{%print_pdfs}}')->all();
+            foreach ($pdfs as $pdf){
+                Craft::$app->db->createCommand()->insert('{{%print_pdfs}}', $pdf)->execute();
+            }
+        }
+        return $this->redirect(UrlHelper::cpUrl('/' . Craft::$app->config->general->cpTrigger .'/print-plugin'));
     }
 
 }
