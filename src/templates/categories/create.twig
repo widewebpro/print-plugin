@@ -75,6 +75,19 @@
                 </select>
             </div>
         </div>
+            {% elseif type == 'static' %}
+        <div class="fieldset">
+            <label for="staticType">
+                <h4>Select Type</h4>
+            </label>
+            <div class="select">
+                <select name="staticType">
+                        <option value="file">File</option>
+                        <option value="video">YouTube Video</option>
+                        <option value="assetFolder">Asset Folder</option>
+                </select>
+            </div>
+        </div>
         {% endif %}
 
         <div class="fieldset">

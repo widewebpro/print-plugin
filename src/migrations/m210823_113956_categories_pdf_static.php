@@ -16,7 +16,8 @@ class m210823_113956_categories_pdf_static extends Migration
     public function safeUp()
     {
         $this->addColumn('{{%print_pdfs}}', 'category', 'integer');
-        $this->addColumn('{{%print_static}}', 'category', 'integer');    }
+        $this->addColumn('{{%print_static}}', 'category', 'integer');
+    }
 
     /**
      * @inheritdoc

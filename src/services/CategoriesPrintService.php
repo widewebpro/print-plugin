@@ -15,7 +15,6 @@ use craft\db\Query;
 
 use Craft;
 use craft\base\Component;
-
 /**
  * CategoriesPrintService Service
  *
@@ -55,13 +54,17 @@ class CategoriesPrintService extends Component
         $title = Craft::$app->request->getRequiredParam('title');
         $type = Craft::$app->request->getRequiredParam('type');
         $userGroup = Craft::$app->request->getRequiredParam('userGroup');
-        $parent = Craft::$app->request->getRequiredParam('parent');
-
+        $parent = Craft::$app->request->getParam('parent');
+        $staticType = null;
+        if ($type == 'static'){
+            $staticType = Craft::$app->request->getRequiredParam('staticType');
+        }
 
         $result = Craft::$app->db->createCommand()->insert('{{%print_categories}}', [
             'title' => $title,
             'type' => $type,
             'parent' => $parent,
+            'staticType' => $staticType,
             'userGroup' => serialize($userGroup)
         ])->execute();
         return $result;
@@ -72,13 +75,18 @@ class CategoriesPrintService extends Component
         $title = Craft::$app->request->getRequiredParam('title');
         $userGroup = Craft::$app->request->getRequiredParam('userGroup');
         $type = Craft::$app->request->getRequiredParam('type');
-        $parent = Craft::$app->request->getRequiredParam('parent');
+        $parent = Craft::$app->request->getParam('parent');
         $id = Craft::$app->request->getRequiredParam('id');
+        $staticType = null;
+        if ($type == 'static'){
+            $staticType = Craft::$app->request->getRequiredParam('staticType');
+        }
 
         $result = Craft::$app->db->createCommand()->update('{{%print_categories}}', [
             'title' => $title,
             'type' => $type,
             'parent' => $parent,
+            'staticType' => $staticType,
             'userGroup' => serialize($userGroup)
         ], ['id' => $id])->execute();
         return $result;

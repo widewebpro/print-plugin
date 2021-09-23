@@ -11,6 +11,7 @@
 namespace wideweb\printplugin\controllers;
 
 
+use craft\elements\Asset;
 use craft\helpers\UrlHelper;
 use craft\web\Controller;
 use wideweb\printplugin\PrintPlugin;

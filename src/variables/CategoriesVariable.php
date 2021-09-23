@@ -70,4 +70,31 @@ class CategoriesVariable
         $result = PrintPlugin::$plugin->categories->getChildCategoriesByCategory($id, $type);
         return $result;
     }
+
+    public function getSubFolders($volumeHandle, $folderName)
+    {
+        $result = (new Query())->select('id')->from('{{%volumes}}')->where(
+            [
+                'handle'=> $volumeHandle
+            ]
+        )->one();
+        if (!$result){
+            return false;
+        }
+        $subFolders = (new Query())->select('*')->from('{{%volumefolders}}')->where(
+            [
+                'volumeId'=> $result['id'],
+                'name' => $folderName
+            ]
+        )->one();
+        if (!$subFolders){
+            return false;
+        }
+        $subFolders = (new Query())->select('*')->from('{{%volumefolders}}')->where(
+            [
+                'parentId'=> $subFolders['id']
+            ]
+        )->all();
+        return $subFolders;
+    }
 }

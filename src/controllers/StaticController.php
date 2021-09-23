@@ -75,6 +75,9 @@ class StaticController extends Controller
         $title = Craft::$app->request->getBodyParam('title');
         $userGroup = Craft::$app->request->getBodyParam('userGroup');
         $category = Craft::$app->request->getBodyParam('category');
+        $videoTitle = Craft::$app->request->getBodyParam('videoTitle');
+        $videoIframe = Craft::$app->request->getBodyParam('videoIframe');
+        $assetFolder = Craft::$app->request->getBodyParam('assetFolder');
         $file = $_FILES['file'];
         $previewImage = $_FILES['previewImage'];
         if ($previewImage and $previewImage['size'] != 0){
@@ -114,6 +117,9 @@ class StaticController extends Controller
                     'title' => $title,
                     'userGroup' => $userGroup,
                     'category' => $category,
+                    'videoTitle' => $videoTitle,
+                    'videoIframe' => $videoIframe,
+                    'assetFolder' => $assetFolder,
                     'file' => trim($url),
                     'previewImage' => trim($previewImage)
                 ])->execute();
@@ -126,6 +132,9 @@ class StaticController extends Controller
         $title = Craft::$app->request->getBodyParam('title');
         $userGroup = Craft::$app->request->getBodyParam('userGroup');
         $category = Craft::$app->request->getBodyParam('category');
+        $videoTitle = Craft::$app->request->getBodyParam('videoTitle');
+        $videoIframe = Craft::$app->request->getBodyParam('videoIframe');
+        $assetFolder = Craft::$app->request->getBodyParam('assetFolder');
         $id = Craft::$app->request->getBodyParam('id');
         $file = $_FILES['file'];
         $previewImage = $_FILES['previewImage'];
@@ -164,7 +173,10 @@ class StaticController extends Controller
         $data = [
             'title' => $title,
             'userGroup' => $userGroup,
-            'category' => $category
+            'category' => $category,
+            'videoTitle' => $videoTitle,
+            'videoIframe' => $videoIframe,
+            'assetFolder' => $assetFolder,
         ];
         if ($previewImage){
             $data['previewImage'] = trim($previewImage);

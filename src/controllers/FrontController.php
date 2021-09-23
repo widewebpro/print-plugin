@@ -116,13 +116,14 @@ class FrontController extends Controller
             }
         }
 
+
         $pdfs = [];
         if ($status == 'any'){
             foreach ($allowedCategories as $allowedCategory){
                 $childs = PrintPlugin::$plugin->categories->getChildCategoriesByCategory($allowedCategory['id'], 'pdf');
                 if ($childs){
                     foreach ($childs as $child){
-                    $pdfs[$allowedCategory['title']][$child['title']] = (new Query())->select("*")->from('{{%print_pdfs}}')->where(['userGroup' => $groups, 'category' => $child['id']])->all();
+                    $pdfs[$allowedCategory['title']][$child['title']] = (new Query())->select("*")->from('{{%print_pdfs}}')->where(['userGroup' => $groups, 'category' => 3])->all();
                     }
                 }
             }
@@ -231,12 +232,76 @@ class FrontController extends Controller
         }
         $pdfs = [];
         if ($status == 'any'){
-            foreach ($allowedCategories as $allowedCategory){
-                $pdfs[$allowedCategory['title']] = (new Query())->select("*")->from('{{%print_static}}')->where(['userGroup' => $groups, 'category' => $allowedCategory['id']])->all();
+            foreach ($allowedCategories as $allowedCategory) {
+                if ($allowedCategory['staticType'] == 'file') {
+                    $selectedFields = 'id, title, enabled, userGroup, file, previewImage, dateCreated, dateUpdated';
+                    $pdfs[$allowedCategory['title']] = [$allowedCategory['staticType'] => (new Query())
+                        ->select($selectedFields)->from('{{%print_static}}')
+                        ->where(['userGroup' => $groups, 'category' => $allowedCategory['id']])->all()];
+                }elseif($allowedCategory['staticType'] == 'video'){
+                    $selectedFields = 'id, title, enabled, userGroup, videoIframe, videoTitle, dateCreated, dateUpdated';
+                    $pdfs[$allowedCategory['title']] = [$allowedCategory['staticType'] => (new Query())
+                        ->select($selectedFields)->from('{{%print_static}}')
+                        ->where(['userGroup' => $groups, 'category' => $allowedCategory['id']])->all()];
+                }elseif($allowedCategory['staticType'] == 'assetFolder'){
+                    $selectedFields = 'id, title, enabled, userGroup, dateCreated, dateUpdated, assetFolder';
+                    $pdfsAsset = (new Query())
+                        ->select($selectedFields)->from('{{%print_static}}')
+                        ->where(['userGroup' => $groups, 'category' => $allowedCategory['id']])->all();
+                    $arrayOfImages = [];
+                    foreach ($pdfsAsset as $folder){
+                    $subFolder = (new Query())->select('*')->from('{{%volumefolders}}')->where(
+                        [
+                            'parentId'=> $folder['assetFolder'],
+                            'name' => 'photos'
+                        ]
+                    )->one();
+                    if ($subFolder){
+                        $assets =Asset::find()->folderId($subFolder['id'])->all();
+                        foreach ($assets as $asset){
+                        $arrayOfImages[] = $asset->url;
+                        }
+                    }
+
+                    }
+                    $pdfs[$allowedCategory['title']] = [$allowedCategory['staticType'] => $arrayOfImages ];
+                }
             }
         }elseif($status == 1){
-            foreach ($allowedCategories as $allowedCategory){
-                $pdfs[$allowedCategory['title']] = (new Query())->select("*")->from('{{%print_static}}')->where(['enabled' => 1, 'userGroup' => $groups, 'category' => $allowedCategory['id']])->all();
+            foreach ($allowedCategories as $allowedCategory) {
+                if ($allowedCategory['staticType'] == 'file') {
+                    $selectedFields = 'id, title, enabled, userGroup, file, previewImage, dateCreated, dateUpdated';
+                    $pdfs[$allowedCategory['title']] = [$allowedCategory['staticType'] => (new Query())
+                        ->select($selectedFields)->from('{{%print_static}}')
+                        ->where(['userGroup' => $groups, 'enabled' => 1, 'category' => $allowedCategory['id']])->all()];
+                }elseif($allowedCategory['staticType'] == 'video'){
+                    $selectedFields = 'id, title, enabled, userGroup, videoIframe, videoTitle, dateCreated, dateUpdated';
+                    $pdfs[$allowedCategory['title']] = [$allowedCategory['staticType'] => (new Query())
+                        ->select($selectedFields)->from('{{%print_static}}')
+                        ->where(['userGroup' => $groups,'enabled' => 1, 'category' => $allowedCategory['id']])->all()];
+                }elseif($allowedCategory['staticType'] == 'assetFolder'){
+                    $selectedFields = 'id, title, enabled, userGroup, dateCreated, dateUpdated, assetFolder';
+                    $pdfsAsset = (new Query())
+                        ->select($selectedFields)->from('{{%print_static}}')
+                        ->where(['userGroup' => $groups,'enabled' => 1, 'category' => $allowedCategory['id']])->all();
+                    $arrayOfImages = [];
+                    foreach ($pdfsAsset as $folder){
+                        $subFolder = (new Query())->select('*')->from('{{%volumefolders}}')->where(
+                            [
+                                'parentId'=> $folder['assetFolder'],
+                                'name' => 'photos'
+                            ]
+                        )->one();
+                        if ($subFolder){
+                            $assets =Asset::find()->folderId($subFolder['id'])->all();
+                            foreach ($assets as $asset){
+                                $arrayOfImages[] = $asset->url;
+                            }
+                        }
+
+                    }
+                    $pdfs[$allowedCategory['title']] = [$allowedCategory['staticType'] => $arrayOfImages ];
+                }
             }
         }
         return \GuzzleHttp\json_encode($pdfs);
