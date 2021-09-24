@@ -304,7 +304,7 @@ class FrontController extends Controller
                 }
             }
         }
-        return \GuzzleHttp\json_encode($pdfs);
+        return $this->asJson($pdfs);
     }
 
 
