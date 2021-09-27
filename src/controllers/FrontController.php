@@ -123,7 +123,7 @@ class FrontController extends Controller
                 $childs = PrintPlugin::$plugin->categories->getChildCategoriesByCategory($allowedCategory['id'], 'pdf');
                 if ($childs){
                     foreach ($childs as $child){
-                    $pdfs[$allowedCategory['title']][$child['title']] = (new Query())->select("*")->from('{{%print_pdfs}}')->where(['userGroup' => $groups, 'category' => 3])->all();
+                        $pdfs[$allowedCategory['title']][$child['title']] = (new Query())->select("*")->from('{{%print_pdfs}}')->where(['userGroup' => $groups, 'category' => 3])->all();
                     }
                 }
             }
@@ -239,7 +239,7 @@ class FrontController extends Controller
                         ->select($selectedFields)->from('{{%print_static}}')
                         ->where(['userGroup' => $groups, 'category' => $allowedCategory['id']])->all()];
                 }elseif($allowedCategory['staticType'] == 'video'){
-                    $selectedFields = 'id, title, enabled, userGroup, videoIframe, videoTitle, dateCreated, dateUpdated';
+                    $selectedFields = 'id, title, enabled, userGroup, videoIframe, previewImage, videoTitle, dateCreated, dateUpdated';
                     $pdfs[$allowedCategory['title']] = [$allowedCategory['staticType'] => (new Query())
                         ->select($selectedFields)->from('{{%print_static}}')
                         ->where(['userGroup' => $groups, 'category' => $allowedCategory['id']])->all()];
@@ -250,18 +250,18 @@ class FrontController extends Controller
                         ->where(['userGroup' => $groups, 'category' => $allowedCategory['id']])->all();
                     $arrayOfImages = [];
                     foreach ($pdfsAsset as $folder){
-                    $subFolder = (new Query())->select('*')->from('{{%volumefolders}}')->where(
-                        [
-                            'parentId'=> $folder['assetFolder'],
-                            'name' => 'photos'
-                        ]
-                    )->one();
-                    if ($subFolder){
-                        $assets =Asset::find()->folderId($subFolder['id'])->all();
-                        foreach ($assets as $asset){
-                        $arrayOfImages[] = $asset->url;
+                        $subFolder = (new Query())->select('*')->from('{{%volumefolders}}')->where(
+                            [
+                                'parentId'=> $folder['assetFolder'],
+                                'name' => 'photos'
+                            ]
+                        )->one();
+                        if ($subFolder){
+                            $assets =Asset::find()->folderId($subFolder['id'])->all();
+                            foreach ($assets as $asset){
+                                $arrayOfImages[] = $asset->url;
+                            }
                         }
-                    }
 
                     }
                     $pdfs[$allowedCategory['title']] = [$allowedCategory['staticType'] => $arrayOfImages ];
@@ -275,7 +275,7 @@ class FrontController extends Controller
                         ->select($selectedFields)->from('{{%print_static}}')
                         ->where(['userGroup' => $groups, 'enabled' => 1, 'category' => $allowedCategory['id']])->all()];
                 }elseif($allowedCategory['staticType'] == 'video'){
-                    $selectedFields = 'id, title, enabled, userGroup, videoIframe, videoTitle, dateCreated, dateUpdated';
+                    $selectedFields = 'id, title, enabled, userGroup, videoIframe, previewImage, videoTitle, dateCreated, dateUpdated';
                     $pdfs[$allowedCategory['title']] = [$allowedCategory['staticType'] => (new Query())
                         ->select($selectedFields)->from('{{%print_static}}')
                         ->where(['userGroup' => $groups,'enabled' => 1, 'category' => $allowedCategory['id']])->all()];

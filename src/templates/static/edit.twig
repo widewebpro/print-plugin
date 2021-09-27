@@ -93,6 +93,9 @@
                     <input style="display: none;" type="file" name="file">
                 </label>
             </div>
+        </div>
+
+        <div id="previewImage" style="display:none">
             <div class="fieldset">
                 <label class="submit-btn --grey">
                     Upload Preview Image
@@ -136,28 +139,34 @@
         var typeCategory = document.getElementById('categoryChange').selectedOptions[0].getAttribute("data-type-static")
         if (typeCategory == 'video'){
             document.getElementById('video').style.display = 'block';
+            document.getElementById('previewImage').style.display = 'block';
             document.getElementById('file').style.display = 'none';
             document.getElementById('folders').style.display = 'none';
         }else if(typeCategory == 'file'){
             document.getElementById('file').style.display = 'block';
+            document.getElementById('previewImage').style.display = 'block';
             document.getElementById('video').style.display = 'none';
             document.getElementById('folders').style.display = 'none';
         }else if(typeCategory == 'assetFolder'){
             document.getElementById('folders').style.display = 'block';
+            document.getElementById('previewImage').style.display = 'none';
             document.getElementById('video').style.display = 'none';
             document.getElementById('file').style.display = 'none';
         }
         document.getElementById('categoryChange').addEventListener('change', function () {
             if  (this.selectedOptions[0].getAttribute("data-type-static") == 'video'){
                 document.getElementById('video').style.display = 'block';
+                document.getElementById('previewImage').style.display = 'block';
                 document.getElementById('file').style.display = 'none';
                 document.getElementById('folders').style.display = 'none';
             }else if(this.selectedOptions[0].getAttribute("data-type-static") == 'file'){
                 document.getElementById('file').style.display = 'block';
+                document.getElementById('previewImage').style.display = 'block';
                 document.getElementById('video').style.display = 'none';
                 document.getElementById('folders').style.display = 'none';
             }else if (this.selectedOptions[0].getAttribute("data-type-static") == 'assetFolder'){
                 document.getElementById('folders').style.display = 'block';
+                document.getElementById('previewImage').style.display = 'none';
                 document.getElementById('video').style.display = 'none';
                 document.getElementById('file').style.display = 'none';
             }

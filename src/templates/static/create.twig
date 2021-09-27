@@ -84,32 +84,36 @@
         </div>
 
         <div id="file">
-        <div class="fieldset">
-            <label class="submit-btn --grey">
-                Upload File
-                <input style="display: none;" type="file" name="file">
-            </label>
+            <div class="fieldset">
+                <label class="submit-btn --grey">
+                    Upload File
+                    <input style="display: none;" type="file" name="file">
+                </label>
+            </div>
         </div>
-        <div class="fieldset">
-            <label class="submit-btn --grey">
-                Upload Preview Image
-                <input style="display: none;" type="file" name="previewImage">
-            </label>
+
+        <div id="previewImage">
+            <div class="fieldset">
+                <label class="submit-btn --grey">
+                    Upload Preview Image
+                    <input style="display: none;" type="file" name="previewImage">
+                </label>
+            </div>
         </div>
-        </div>
+
         <div id="video" style="display:none">
-        <div class="fieldset">
-            <label for="videoTitle">
-                <h4>YouTube Video Title</h4>
-            </label>
-            <input type="text" name="videoTitle" value="">
-        </div>
-        <div class="fieldset">
-            <label for="videoIframe">
-                <h4>YouTube Video</h4>
-            </label>
-            <textarea type="text" name="videoIframe" rows="5" value=""></textarea>
-        </div>
+            <div class="fieldset">
+                <label for="videoTitle">
+                    <h4>YouTube Video Title</h4>
+                </label>
+                <input type="text" name="videoTitle" value="">
+            </div>
+            <div class="fieldset">
+                <label for="videoIframe">
+                    <h4>YouTube Video</h4>
+                </label>
+                <textarea type="text" name="videoIframe" rows="5" value=""></textarea>
+            </div>
         </div>
 
         {% set subFolders = craft.printPluginCategories.getSubFolders('images', 'clients') %}
@@ -133,14 +137,17 @@
         document.getElementById('categoryChange').addEventListener('change', function () {
             if  (this.selectedOptions[0].getAttribute("data-type-static") == 'video'){
                 document.getElementById('video').style.display = 'block';
+                document.getElementById('previewImage').style.display = 'block';
                 document.getElementById('file').style.display = 'none';
                 document.getElementById('folders').style.display = 'none';
             }else if(this.selectedOptions[0].getAttribute("data-type-static") == 'file'){
                 document.getElementById('file').style.display = 'block';
+                document.getElementById('previewImage').style.display = 'block';
                 document.getElementById('video').style.display = 'none';
                 document.getElementById('folders').style.display = 'none';
             }else if (this.selectedOptions[0].getAttribute("data-type-static") == 'assetFolder'){
                 document.getElementById('folders').style.display = 'block';
+                document.getElementById('previewImage').style.display = 'none';
                 document.getElementById('video').style.display = 'none';
                 document.getElementById('file').style.display = 'none';
             }
