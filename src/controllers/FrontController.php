@@ -123,7 +123,7 @@ class FrontController extends Controller
                 $childs = PrintPlugin::$plugin->categories->getChildCategoriesByCategory($allowedCategory['id'], 'pdf');
                 if ($childs){
                     foreach ($childs as $child){
-                        $pdfs[$allowedCategory['title']][$child['title']] = (new Query())->select("*")->from('{{%print_pdfs}}')->where(['userGroup' => $groups, 'category' => 3])->all();
+                        $pdfs[$allowedCategory['title']][$child['title']] = (new Query())->select("*")->from('{{%print_pdfs}}')->where(['userGroup' => $groups, 'category' => $child['id']])->all();
                     }
                 }
             }
