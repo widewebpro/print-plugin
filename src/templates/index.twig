@@ -52,7 +52,6 @@
   <div class="btn-wrap --content-left">
     <a href="{{ url('print-plugin/create-pdf') }}" class="create-new-pdf-btn">Create</a>
   </div>
-
     {% set pdfs = craft.printPlugin.getAllPdf('any') %}
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.2.0/jspdf.umd.min.js"></script>
 
@@ -63,11 +62,11 @@
     <table id="pdfs-list" class="data">
       <thead>
       <tr>
-        <th style="width:10%" scope="col" data-attribute="title" class="orderable"></th>
-        <th style="width:10%" scope="col" data-attribute="title" class="orderable">Title</th>
-        <th style="width:10%" scope="col" data-attribute="title" class="orderable">Type</th>
-        <th style="width:10%" scope="col" data-attribute="title" class="orderable">Settings</th>
-        <th style="width:10%" scope="col" data-attribute="title" class="orderable">Date Created</th>
+        <th style="width:5%" scope="col" data-attribute="title" class="orderable"></th>
+        <th style="width:10%" scope="col" data-attribute="title" class="orderable sort">Title</th>
+          {#<th style="width:10%" scope="col" data-attribute="title" class="orderable">Type</th>#}
+          {#<th style="width:10%" scope="col" data-attribute="title" class="orderable">Settings</th>#}
+        <th style="width:10%" scope="col" data-attribute="title" class="orderable sort">User Group</th>
         <th style="width:10%" scope="col" data-attribute="title" class="orderable">Generate PDF</th>
         <th style="width:10%" scope="col" data-attribute="title" class="orderable">Generate JPEG</th>
         <th style="width:10%" scope="col" data-attribute="title" class="orderable">Delete</th>
@@ -75,6 +74,7 @@
       </tr>
       </thead>
       <tbody>
+      <tr data-id="0" data-name=" item.address " hidden style="display: none"></tr>
       {% for pdf in pdfs %}
         <tr data-id="{{ pdf.id }}" data-name=" item.address ">
           <td>
@@ -85,16 +85,16 @@
                 {{ pdf.title }}
             </a>
           </td>
+            {#<td>#}
+            {#{{ pdf.type|capitalize }}#}
+            {#</td>#}
+            {#<td>#}
+            {#{% for key, value in pdf.settings|json_decode if value %}#}
+            {#<div> {{ key|capitalize }} - {{ value|capitalize }}</div>#}
+            {#{% endfor %}#}
+            {#</td>#}
           <td>
-              {{ pdf.type|capitalize }}
-          </td>
-          <td>
-              {% for key, value in pdf.settings|json_decode if value %}
-                <div> {{ key|capitalize }} - {{ value|capitalize }}</div>
-              {% endfor %}
-          </td>
-          <td>
-              {{ pdf.dateCreated }}
+              {{ craft.app.userGroups.getGroupByHandle(pdf.userGroup).name }}
           </td>
 
           <td>
@@ -147,7 +147,21 @@
   </form>
 
   <div class="pdf-container-by-print"></div>
+  <script>
+      const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
 
+      const comparer = (idx, asc) => (a, b) => ((v1, v2) =>
+      v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
+      )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+
+      // do the work...
+      document.querySelectorAll('th.sort').forEach(th => th.addEventListener('click', (() => {
+          const table = th.closest('table').querySelector('tbody');
+      Array.from(table.querySelectorAll('tr:nth-child(n+2)'))
+          .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
+          .forEach(tr => table.appendChild(tr) );
+      })));
+  </script>
   <style>
     .--content-left {
       display: flex;
