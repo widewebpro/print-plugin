@@ -93,8 +93,14 @@
             {#<div> {{ key|capitalize }} - {{ value|capitalize }}</div>#}
             {#{% endfor %}#}
             {#</td>#}
-          <td>
-              {{ craft.app.userGroups.getGroupByHandle(pdf.userGroup).name ?? '' }}
+          <td>{% set groupp = craft.app.userGroups.getGroupByHandle(pdf.userGroup) %}
+            {% if groupp %}
+              {{ craft.app.userGroups.getGroupByHandle(pdf.userGroup).name }}
+                {% elseif pdf.userGroup == 'all' %}
+                  All
+                {% else %}
+                -
+            {% endif %}
           </td>
 
           <td>
