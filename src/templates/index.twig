@@ -94,7 +94,7 @@
             {#{% endfor %}#}
             {#</td>#}
           <td>
-              {{ craft.app.userGroups.getGroupByHandle(pdf.userGroup).name }}
+              {{ craft.app.userGroups.getGroupByHandle(pdf.userGroup).name ?? '' }}
           </td>
 
           <td>
